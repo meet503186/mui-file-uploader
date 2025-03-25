@@ -1,3 +1,4 @@
+import { TextFieldProps } from "@mui/material";
 import { InputHTMLAttributes } from "react";
 
 export namespace IFileUploader {
@@ -13,6 +14,8 @@ export namespace IFileUploader {
     inputProps?: InputHTMLAttributes<HTMLInputElement>;
     extraProps?: ExtraProps;
     onError?: (error: string) => void;
+    size?: TextFieldProps["size"];
+    count?: boolean;
   }
 
   interface ExtraProps {

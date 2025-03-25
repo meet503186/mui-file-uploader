@@ -42,7 +42,13 @@ const RenderImages = ({ images, onRemove }: IRenderImages) => {
             }}
           >
             <Typography
-              sx={{ flex: 1, display: "flex", alignItems: "center", gap: 0.5 }}
+              sx={{
+                flex: 1,
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+                maxWidth: "80%",
+              }}
             >
               <Image
                 src={fileUrl}
@@ -53,13 +59,20 @@ const RenderImages = ({ images, onRemove }: IRenderImages) => {
               <Typography
                 color="textPrimary"
                 component={"span"}
-                sx={{ fontSize: 13, maxWidth: "70%" }}
+                sx={{
+                  fontSize: 13,
+                  overflow: "hidden",
+                  whiteSpace: "nowrap",
+                  textOverflow: "ellipsis",
+                }}
               >
                 {imageName}
               </Typography>
             </Typography>
 
-            <Typography>
+            <Typography
+              sx={{ flex: 1, display: "flex", justifyContent: "flex-end" }}
+            >
               <IconButton onClick={() => onView(index)}>
                 <VisibilityIcon fontSize="small" />
               </IconButton>

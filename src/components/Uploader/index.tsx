@@ -5,7 +5,13 @@ import ImageUploaderModal from "./UploaderModal";
 import { useMemo, useState } from "react";
 import { stopStreamedVideo } from "./UploadOptions/UploadFromCamera/utils";
 
-const ImageUploader = ({ error, images, ...rest }: IFileUploader.Props) => {
+const ImageUploader = ({
+  error,
+  images,
+  size,
+  count = false,
+  ...rest
+}: IFileUploader.Props) => {
   const theme = useTheme();
   const [showModal, setShowModal] = useState(false);
   const handleCloseModal = () => {
@@ -24,7 +30,7 @@ const ImageUploader = ({ error, images, ...rest }: IFileUploader.Props) => {
   }, [images]);
 
   return (
-    <Typography component={"div"}>
+    <Typography component={"div"} sx={{ width: "100%" }}>
       {/* visible component */}
       <Typography
         sx={{
@@ -37,7 +43,7 @@ const ImageUploader = ({ error, images, ...rest }: IFileUploader.Props) => {
           "border:hover": "1px solid rgba(0, 0, 0, 0.87)",
           borderRadius: "4px",
           cursor: "pointer",
-          p: 1.8,
+          padding: size === "small" ? 1 : 1.8,
         }}
         onClick={() => setShowModal(true)}
       >
@@ -50,7 +56,7 @@ const ImageUploader = ({ error, images, ...rest }: IFileUploader.Props) => {
               : theme.palette.text.primary,
           }}
         >
-          {`${label} (${imagesData.length})`}
+          {label} {count && `(${imagesData.length})`}
         </Typography>
       </Typography>
 
