@@ -10,6 +10,7 @@ const ImageUploader = ({
   images,
   size,
   count = false,
+  hideDoneButton = false,
   ...rest
 }: IFileUploader.Props) => {
   const theme = useTheme();
@@ -69,6 +70,7 @@ const ImageUploader = ({
           isOpen={showModal}
           onClose={handleCloseModal}
           images={imagesData}
+          hideDoneButton={hideDoneButton}
           {...rest}
         />
       )}

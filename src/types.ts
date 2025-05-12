@@ -16,6 +16,7 @@ export namespace IFileUploader {
     onError?: (error: string) => void;
     size?: TextFieldProps["size"];
     count?: boolean;
+    hideDoneButton?: boolean;
   }
 
   interface ExtraProps {

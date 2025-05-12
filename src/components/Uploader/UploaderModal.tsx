@@ -33,6 +33,7 @@ const ImageUploaderModal = ({
   images,
   onChange,
   multiple,
+  hideDoneButton,
   ...rest
 }: IImageUploaderModalProps) => {
   const [activeTab, setActiveTab] = useState(0);
@@ -94,14 +95,19 @@ const ImageUploaderModal = ({
         overflow: "auto",
       }}
       className="hide-scrollbar"
-      buttons={[
-        {
-          title: "Done",
-          variant: "contained",
-          onClick: onClose,
-          hidden: !images.length,
-        },
-      ]}
+      buttons={
+        !hideDoneButton
+          ? [
+              {
+                title: "Done",
+                variant: "contained",
+                onClick: onClose,
+                hidden: !images.length,
+                sx: { mt: 2 },
+              },
+            ]
+          : []
+      }
     >
       {/* Upload options (tabs) */}
       {!disabled && (
@@ -117,6 +123,7 @@ const ImageUploaderModal = ({
               uploadOption={VISIBLE_UPLOAD_OPTIONS[activeTab]?._key}
               extraProps={extraProps}
               onChange={handleChange}
+              multiple={multiple}
               {...rest}
             />
           }
