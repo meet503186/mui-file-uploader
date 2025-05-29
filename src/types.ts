@@ -2,6 +2,17 @@ import { TextFieldProps } from "@mui/material";
 import { InputHTMLAttributes } from "react";
 
 export namespace IFileUploader {
+  export type fileType =
+    | string
+    | {
+        fileUrl: string;
+        fileType: string;
+        fileName: string;
+        fileSize: number;
+        filePath: string;
+      }
+    | File;
+
   export interface Props {
     isOptional?: boolean;
     name: string;
@@ -9,14 +20,19 @@ export namespace IFileUploader {
     error?: string;
     multiple?: boolean;
     disabled?: boolean;
-    images: (string | File)[];
-    onChange: (images: (File | string)[]) => void;
+    images: fileType[];
+    onChange: (images: fileType[]) => void;
     inputProps?: InputHTMLAttributes<HTMLInputElement>;
     extraProps?: ExtraProps;
     onError?: (error: string) => void;
     size?: TextFieldProps["size"];
     count?: boolean;
     hideDoneButton?: boolean;
+    onUploadFile?: (
+      file: File,
+      onUploadProgress: (progress: number) => void
+    ) => Promise<string>;
+    onDeleteFile?: (file: File) => Promise<string>;
   }
 
   interface ExtraProps {

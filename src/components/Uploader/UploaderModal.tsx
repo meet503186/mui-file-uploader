@@ -30,43 +30,98 @@ const ImageUploaderModal = ({
   onClose,
   extraProps,
   disabled,
-  images,
+  images: _images,
   onChange,
   multiple,
   hideDoneButton,
+  onUploadFile,
+  onDeleteFile,
   ...rest
 }: IImageUploaderModalProps) => {
   const [activeTab, setActiveTab] = useState(0);
+  const [progressMap, setProgressMap] = useState<number[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [images, setImages] = useState<IFileUploader.fileType[]>(_images || []);
+
   const { uploadOptions = [] } = extraProps || {};
 
   const onTabChange = (newTab: number) => {
-    setActiveTab(newTab);
+    !isUploading && setActiveTab(newTab);
   };
 
-  const handleChange = async (files: (string | File)[]) => {
-    let tempFiles: (string | File)[] = [];
+  const handleUploadProgress = (progress: number, index: number, _: number) => {
+    setProgressMap((_state) => {
+      _state[index] = progress;
+      return [..._state];
+    });
+  };
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
+  const handleChange = async (files: IFileUploader.fileType[]) => {
+    const filesToUpload = files.filter(
+      (file): file is File => file instanceof File
+    );
 
-      if (typeof file === "string") {
-        tempFiles.push(file);
+    setProgressMap([
+      ...Array(filesToUpload.length),
+      ...Array(_images.length).fill(100),
+    ]);
+
+    setImages([
+      ...filesToUpload.map((file) => ({
+        fileUrl: URL.createObjectURL(file),
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        filePath: file.name,
+      })),
+      ..._images,
+    ]);
+
+    onUploadFile && setIsUploading(true);
+
+    const uploadPromises = filesToUpload.map(async (file, index) => {
+      const compressedImage = await compressImage({ file });
+
+      if (onUploadFile) {
+        try {
+          const filePath = await onUploadFile(compressedImage, (progress) =>
+            handleUploadProgress(progress, index, filesToUpload.length)
+          );
+
+          return {
+            fileUrl: URL.createObjectURL(file),
+            fileName: compressedImage.name,
+            fileType: compressedImage.type,
+            fileSize: compressedImage.size,
+            filePath,
+          };
+        } catch (error) {
+          rest.onError?.(
+            error instanceof Error ? error.message : "Upload failed"
+          );
+          return null;
+        }
       } else {
-        const compressedImage = await compressImage({ file });
-
-        tempFiles.push(compressedImage);
+        return compressedImage;
       }
-    }
+    });
+
+    const results = await Promise.all(uploadPromises);
+    const successfulUploads = results.filter(
+      Boolean
+    ) as IFileUploader.fileType[];
+
+    setIsUploading(false);
 
     if (multiple) {
-      onChange([...images, ...tempFiles]);
+      onChange([..._images, ...successfulUploads]);
     } else {
-      onChange(tempFiles);
+      onChange(successfulUploads);
     }
   };
 
   const handleRemove = (index: number) => {
-    onChange(images.filter((_, indx) => indx !== index));
+    onChange(_images.filter((_, indx) => indx !== index));
   };
 
   const VISIBLE_UPLOAD_OPTIONS = useMemo(() => {
@@ -79,7 +134,7 @@ const ImageUploaderModal = ({
     <CustomModal
       title={"Upload Image(s)"}
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={!isUploading ? onClose : () => {}}
       sx={{
         width: {
           xs: "90%",
@@ -96,7 +151,7 @@ const ImageUploaderModal = ({
       }}
       className="hide-scrollbar"
       buttons={
-        !hideDoneButton
+        !hideDoneButton && !isUploading
           ? [
               {
                 title: "Done",
@@ -124,6 +179,7 @@ const ImageUploaderModal = ({
               extraProps={extraProps}
               onChange={handleChange}
               multiple={multiple}
+              disabled={isUploading}
               {...rest}
             />
           }
@@ -131,7 +187,11 @@ const ImageUploaderModal = ({
       )}
 
       {/* render images */}
-      <RenderImages images={images} onRemove={handleRemove} />
+      <RenderImages
+        images={images}
+        onRemove={handleRemove}
+        progressMap={progressMap}
+      />
     </CustomModal>
   );
 };

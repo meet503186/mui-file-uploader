@@ -1,17 +1,19 @@
-import { IconButton, Typography } from "@mui/material";
+import { IconButton, LinearProgress, Typography } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Image from "./Image";
 import { getFileUrl } from "./utils";
 import { useState } from "react";
 import { ImagePreviewModal } from "./PreviewModal";
+import { IFileUploader } from "../../types";
 
 interface IRenderImages {
-  images: (string | File)[];
+  images: IFileUploader.fileType[];
   onRemove: (index: number) => void;
+  progressMap: number[];
 }
 
-const RenderImages = ({ images, onRemove }: IRenderImages) => {
+const RenderImages = ({ images, onRemove, progressMap }: IRenderImages) => {
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
 
   const onView = (index: number) => {
@@ -70,16 +72,25 @@ const RenderImages = ({ images, onRemove }: IRenderImages) => {
               </Typography>
             </Typography>
 
-            <Typography
-              sx={{ flex: 1, display: "flex", justifyContent: "flex-end" }}
-            >
-              <IconButton onClick={() => onView(index)}>
-                <VisibilityIcon fontSize="small" />
-              </IconButton>
-              <IconButton onClick={() => onRemove(index)}>
-                <DeleteIcon fontSize="small" color="error" />
-              </IconButton>
-            </Typography>
+            {!!progressMap[index] && progressMap[index] !== 100 && (
+              <LinearProgress
+                sx={{ width: 200, height: 4, borderRadius: 4 }}
+                variant="determinate"
+                value={progressMap[index]}
+              />
+            )}
+            {progressMap[index] === 100 && (
+              <Typography
+                sx={{ flex: 1, display: "flex", justifyContent: "flex-end" }}
+              >
+                <IconButton onClick={() => onView(index)}>
+                  <VisibilityIcon fontSize="small" />
+                </IconButton>
+                <IconButton onClick={() => onRemove(index)}>
+                  <DeleteIcon fontSize="small" color="error" />
+                </IconButton>
+              </Typography>
+            )}
           </Typography>
         );
       })}

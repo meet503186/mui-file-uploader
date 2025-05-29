@@ -8,6 +8,7 @@ const UploadFromGallery = ({
   name,
   multiple = false,
   onChange,
+  disabled,
   extraProps,
   inputProps,
   onError,
@@ -73,6 +74,7 @@ const UploadFromGallery = ({
           }}
           accept={supportedFiles.join(", ")}
           multiple={multiple}
+          disabled={disabled}
           onChange={(e) => {
             if (e.target.files) {
               const files = filterFilesByMaxSize({

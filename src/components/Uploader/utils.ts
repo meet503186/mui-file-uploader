@@ -1,3 +1,5 @@
+import { IFileUploader } from "../../types";
+
 export const filterFilesByMaxSize = ({
   files,
   maxSize,
@@ -21,12 +23,16 @@ export const getFileType = (file: File) => {
   return file.type.split("/")[0];
 };
 
-export const getFileUrl = (file: File | string) => {
+export const getFileUrl = (file: IFileUploader.fileType) => {
   if (typeof file === "string") {
     return file;
   }
 
-  return URL.createObjectURL(file);
+  if ("fileUrl" in file) {
+    return file.fileUrl;
+  }
+
+  return URL.createObjectURL(file as File);
 };
 
 export async function compressImage({

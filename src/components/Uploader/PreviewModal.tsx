@@ -4,10 +4,11 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useMemo } from "react";
 import { getFileUrl } from "./utils";
+import { IFileUploader } from "../../types";
 
 interface IPreviewModalProps {
   onClose: () => void;
-  images: (string | File)[];
+  images: IFileUploader.fileType[];
   activeImageIndex?: number;
   onChangeActiveImageIndex?: (newIndex: number) => void;
 }
