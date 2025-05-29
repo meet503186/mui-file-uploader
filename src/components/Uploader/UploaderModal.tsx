@@ -64,11 +64,12 @@ const UploaderModal = ({
     );
 
     setProgressMap([
-      ...Array(filesToUpload.length),
       ...Array(_files.length).fill(100),
+      ...Array(filesToUpload.length),
     ]);
 
     setFiles([
+      ..._files,
       ...filesToUpload.map((file) => ({
         fileUrl: URL.createObjectURL(file),
         fileName: file.name,
@@ -76,7 +77,6 @@ const UploaderModal = ({
         fileSize: file.size,
         filePath: file.name,
       })),
-      ..._files,
     ]);
 
     onUploadFile && setIsUploading(true);
@@ -87,7 +87,11 @@ const UploaderModal = ({
       if (onUploadFile) {
         try {
           const filePath = await onUploadFile(compressedImage, (progress) =>
-            handleUploadProgress(progress, index, filesToUpload.length)
+            handleUploadProgress(
+              progress,
+              _files.length + index,
+              filesToUpload.length
+            )
           );
 
           return {
