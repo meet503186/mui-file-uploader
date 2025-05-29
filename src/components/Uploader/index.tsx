@@ -1,13 +1,13 @@
 import { FormHelperText, Typography, useTheme } from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
 import { IFileUploader } from "../../types";
-import ImageUploaderModal from "./UploaderModal";
-import { useMemo, useState } from "react";
+import UploaderModal from "./UploaderModal";
+import { useState } from "react";
 import { stopStreamedVideo } from "./UploadOptions/UploadFromCamera/utils";
 
-const ImageUploader = ({
+const FileUploader = ({
   error,
-  images,
+  files = [],
   size,
   count = false,
   hideDoneButton = false,
@@ -23,14 +23,6 @@ const ImageUploader = ({
   };
 
   const { label } = rest;
-
-  const imagesData = useMemo(() => {
-    if (typeof images === "string") {
-      return [images];
-    }
-
-    return images || [];
-  }, [images]);
 
   return (
     <Typography component={"div"} sx={{ width: "100%" }}>
@@ -59,19 +51,19 @@ const ImageUploader = ({
               : theme.palette.text.primary,
           }}
         >
-          {label} {count && `(${imagesData.length})`}
+          {label} {count && `(${files.length})`}
         </Typography>
       </Typography>
 
       {/* error */}
       {!!error && <FormHelperText error={!!error}>{error}</FormHelperText>}
 
-      {/* image uplodaer modal */}
+      {/* file uplodaer modal */}
       {showModal && (
-        <ImageUploaderModal
+        <UploaderModal
           isOpen={showModal}
           onClose={handleCloseModal}
-          images={imagesData}
+          files={files}
           hideDoneButton={hideDoneButton}
           onUploadFile={onUploadFile}
           onDeleteFile={onDeleteFile}
@@ -82,4 +74,4 @@ const ImageUploader = ({
   );
 };
 
-export default ImageUploader;
+export default FileUploader;

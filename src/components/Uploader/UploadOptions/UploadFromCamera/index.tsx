@@ -23,7 +23,18 @@ const UploadFromCamera = ({ onChange }: IFileUploader.UploadOption) => {
 
   // handling accept picture
   const handleAcceptPicture = async () => {
-    clickedPicture && onChange([clickedPicture]);
+    if (clickedPicture) {
+      const { name, size, type } = clickedPicture;
+      onChange([
+        {
+          fileName: name,
+          filePath: name,
+          fileSize: size,
+          fileType: type,
+          fileUrl: URL.createObjectURL(clickedPicture),
+        },
+      ]);
+    }
     setClickedPicture(null);
   };
 

@@ -2,17 +2,6 @@ import { TextFieldProps } from "@mui/material";
 import { InputHTMLAttributes } from "react";
 
 export namespace IFileUploader {
-  export type fileType =
-    | string
-    | {
-        fileUrl: string;
-        fileType: string;
-        fileName: string;
-        fileSize: number;
-        filePath: string;
-      }
-    | File;
-
   export interface Props {
     isOptional?: boolean;
     name: string;
@@ -20,8 +9,8 @@ export namespace IFileUploader {
     error?: string;
     multiple?: boolean;
     disabled?: boolean;
-    images: fileType[];
-    onChange: (images: fileType[]) => void;
+    files: IMedia.FileData[];
+    onChange: (files: IMedia.FileData[]) => void;
     inputProps?: InputHTMLAttributes<HTMLInputElement>;
     extraProps?: ExtraProps;
     onError?: (error: string) => void;
@@ -37,18 +26,50 @@ export namespace IFileUploader {
 
   interface ExtraProps {
     maxFileSize: number;
-    supportedFiles: supportedFileTypes[];
+    supportedFiles: SupportedFileTypes[];
     uploadOptions: uploadOptionType[];
   }
 
-  export type supportedFileTypes = "image/*" | "image/jpeg" | "image/png";
+  export type SupportedFileTypes =
+    | "*"
+    | "image/*"
+    | "image/jpeg"
+    | "image/png"
+    | "image/gif"
+    | "image/webp"
+    | "video/*"
+    | "video/mp4"
+    | "video/webm"
+    | "audio/*"
+    | "audio/mpeg"
+    | "audio/wav"
+    | "application/pdf"
+    | "application/msword" // .doc
+    | "application/vnd.openxmlformats-officedocument.wordprocessingml.document" // .docx
+    | "application/vnd.ms-excel" // .xls
+    | "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" // .xlsx
+    | "application/vnd.ms-powerpoint" // .ppt
+    | "application/vnd.openxmlformats-officedocument.presentationml.presentation" // .pptx
+    | "text/plain";
 
   export type uploadOptionType = "camera" | "gallery";
 
-  export type UploadOption = Omit<Props, "images">;
+  export type UploadOption = Omit<Props, "files">;
 
   export interface ITabGroup {
     _key?: string;
     label: string;
+  }
+}
+
+export namespace IMedia {
+  export type type = "image" | "video" | "audio" | "document" | "pdf";
+
+  export interface FileData {
+    fileUrl: string;
+    fileType: string;
+    fileName: string;
+    fileSize: number;
+    filePath: string;
   }
 }

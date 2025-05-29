@@ -1,4 +1,4 @@
-import { IFileUploader } from "../../types";
+import { IMedia } from "./types";
 
 export const filterFilesByMaxSize = ({
   files,
@@ -17,23 +17,42 @@ export const filterFilesByMaxSize = ({
   return filteredFiles;
 };
 
-export const getFileType = (file: File) => {
-  if (!file) return null;
+// export const getFileType = (file: IMedia.FileData) => {
+//   if (!file) return null;
 
-  return file.type.split("/")[0];
-};
+//   if (file instanceof File) {
+//     if (file.type.startsWith("application")) {
+//       return file.type.split("/")[1];
+//     }
+//     return file.type.split("/")[0];
+//   }
 
-export const getFileUrl = (file: IFileUploader.fileType) => {
-  if (typeof file === "string") {
-    return file;
-  }
+//   if (typeof file === "string") {
+//     return file;
+//   }
 
-  if ("fileUrl" in file) {
-    return file.fileUrl;
-  }
+//   if (file.fileType.startsWith("application")) {
+//     return file.fileType.split("/")[1];
+//   }
 
-  return URL.createObjectURL(file as File);
-};
+//   return file.fileType.split("/")[0];
+// };
+
+export function getFileType(file: IMedia.FileData): string {
+  const name = file instanceof File ? file.name : file.fileName;
+  const ext = name.split(".").pop()?.toLowerCase();
+
+  if (!ext) return "unknown";
+
+  if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) return "image";
+  if (["mp4", "webm", "ogg", "mov"].includes(ext)) return "video";
+  if (["mp3", "wav", "aac", "flac"].includes(ext)) return "audio";
+  if (["pdf"].includes(ext)) return "pdf";
+  if (["doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt"].includes(ext))
+    return "document";
+
+  return "unknown";
+}
 
 export async function compressImage({
   file,
@@ -65,11 +84,11 @@ export async function compressImage({
 
     // Turn into Blob
     const blob: any = await new Promise((resolve) =>
-      canvas.toBlob(resolve, "image/jpeg", 0.5)
+      canvas.toBlob(resolve, file.type, 0.5)
     );
 
-    const compressedFile = new File([blob], "fileName.jpg", {
-      type: "image/jpeg",
+    const compressedFile = new File([blob], file.name, {
+      type: file.type,
     });
 
     if (compressedFile.size > maxImageSize) {

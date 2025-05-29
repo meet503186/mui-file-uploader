@@ -1,34 +1,40 @@
-import { IconButton, LinearProgress, Typography } from "@mui/material";
+import Image from "./Image";
+import Video from "./Video";
+import { AudioPlaceholder } from "./Audio";
+import { DocumentPlaceholder } from "./Document";
+import { PdfPlaceholder } from "./Pdf";
+
+import { Box, IconButton, LinearProgress, Typography } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
-import Image from "./Image";
-import { getFileUrl } from "./utils";
-import { useState } from "react";
-import { ImagePreviewModal } from "./PreviewModal";
-import { IFileUploader } from "../../types";
 
-interface IRenderImages {
-  images: IFileUploader.fileType[];
+import { useCallback, useState } from "react";
+import PreviewModal from "./PreviewModal";
+import { IMedia } from "../../types";
+import { getFileType } from "../../utils";
+
+interface IRenderMedia {
+  media: IMedia.FileData[];
   onRemove: (index: number) => void;
   progressMap: number[];
 }
 
-const RenderImages = ({ images, onRemove, progressMap }: IRenderImages) => {
-  const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
+const RenderMedia = ({ media, onRemove, progressMap }: IRenderMedia) => {
+  const [previewData, setPreviewData] = useState<{
+    selectedIndex: number;
+  } | null>(null);
+  const closePreview = () => setPreviewData(null);
 
-  const onView = (index: number) => {
-    setActiveImageIndex(index);
-  };
+  const onView = useCallback((index: number) => {
+    setPreviewData({ selectedIndex: index });
+  }, []);
 
   return (
     <Typography component={"div"}>
-      {images.map((image: any, index: number) => {
-        const fileUrl = getFileUrl(image);
-        const imageName = image?.name || `image${index + 1}`;
-
+      {media.map((file, index: number) => {
         return (
           <Typography
-            key={image.name + index}
+            key={file.fileName + index}
             component={"div"}
             color="secondary"
             sx={{
@@ -52,12 +58,9 @@ const RenderImages = ({ images, onRemove, progressMap }: IRenderImages) => {
                 maxWidth: "80%",
               }}
             >
-              <Image
-                src={fileUrl}
-                alt={imageName}
-                style={{ width: "100%", height: "100%", objectFit: "contain" }}
-                containerStyle={{ width: "40px", height: "35px" }}
-              />
+              <Box sx={{ width: 30, height: 30 }}>
+                <RenderMediaItem data={file} />
+              </Box>
               <Typography
                 color="textPrimary"
                 component={"span"}
@@ -68,7 +71,7 @@ const RenderImages = ({ images, onRemove, progressMap }: IRenderImages) => {
                   textOverflow: "ellipsis",
                 }}
               >
-                {imageName}
+                {file.fileName}
               </Typography>
             </Typography>
 
@@ -95,16 +98,31 @@ const RenderImages = ({ images, onRemove, progressMap }: IRenderImages) => {
         );
       })}
 
-      {activeImageIndex !== null && (
-        <ImagePreviewModal
-          images={images}
-          activeImageIndex={activeImageIndex}
-          onChangeActiveImageIndex={(newIndex) => setActiveImageIndex(newIndex)}
-          onClose={() => setActiveImageIndex(null)}
-        />
-      )}
+      <PreviewModal
+        isOpen={!!previewData}
+        onClose={closePreview}
+        data={media}
+        currentIndex={previewData?.selectedIndex!}
+      />
     </Typography>
   );
 };
 
-export default RenderImages;
+export default RenderMedia;
+
+const RenderMediaItem = ({ data }: { data: IMedia.FileData }) => {
+  switch (getFileType(data)) {
+    case "image":
+      return <Image src={data.fileUrl} alt={data.fileName} />;
+    case "video":
+      return <Video src={data.fileUrl} playIcon />;
+    case "audio":
+      return <AudioPlaceholder />;
+
+    case "document":
+      return <DocumentPlaceholder />;
+
+    case "pdf":
+      return <PdfPlaceholder />;
+  }
+};

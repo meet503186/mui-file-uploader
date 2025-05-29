@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { IFileUploader } from "../../../types";
-import { filterFilesByMaxSize } from "../utils";
+import { filterFilesByMaxSize } from "../../../utils";
 import { useMemo } from "react";
 
 const UploadFromGallery = ({
@@ -13,16 +13,37 @@ const UploadFromGallery = ({
   inputProps,
   onError,
 }: IFileUploader.UploadOption) => {
-  const { maxFileSize = 5, supportedFiles = ["image/*"] } = extraProps || {};
+  console.log(extraProps);
+
+  const { maxFileSize = 5, supportedFiles = ["*"] } = extraProps || {};
 
   const supportedFilesString = useMemo(() => {
-    if (supportedFiles.includes("image/*")) {
-      return "Supported all type of image files";
+    if (supportedFiles.includes("*")) {
+      return "All file types are supported";
     }
 
-    return `Supported files ${supportedFiles
-      .join(", ")
-      .replaceAll("image/", "")}`;
+    const friendlyTypesMap: Record<string, string> = {
+      "image/*": "images",
+      "video/*": "videos",
+      "audio/*": "audio files",
+      "application/pdf": "PDFs",
+      "application/msword": "Word documents",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+        "Word documents",
+      "application/vnd.ms-excel": "Excel spreadsheets",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        "Excel spreadsheets",
+      "application/vnd.ms-powerpoint": "PowerPoint presentations",
+      "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+        "PowerPoint presentations",
+      "text/plain": "text files",
+    };
+
+    const friendlyNames = (supportedFiles as string[])
+      .map((type) => friendlyTypesMap[type] || type)
+      .filter((value, index, self) => self.indexOf(value) === index); // remove duplicates
+
+    return `Supported files: ${friendlyNames.join(", ")}`;
   }, [supportedFiles]);
 
   return (
@@ -55,7 +76,7 @@ const UploadFromGallery = ({
           </Typography>
 
           <Typography component={"span"} color={"textPrimary"}>
-            Drop your image here, or <a>browse</a>
+            Drop your file here, or <a>browse</a>
           </Typography>
 
           <Typography component={"span"} sx={{ fontSize: 14 }}>

@@ -1,12 +1,12 @@
 import CustomModal from "../CustomModal";
-import { IFileUploader } from "../../types";
+import { IFileUploader, IMedia } from "../../types";
 import { useMemo, useState } from "react";
 import RenderUploadOption from "./RenderUploadOption";
-import RenderImages from "./RenderImages";
-import { compressImage } from "./utils";
+import { compressImage } from "../../utils";
 import ScrollableTabs from "../ScrollableTabs";
+import RenderMedia from "../RenderMedia";
 
-interface IImageUploaderModalProps extends IFileUploader.Props {
+interface IUploaderModalProps extends IFileUploader.Props {
   isOpen: boolean;
   onClose: () => void;
 }
@@ -25,23 +25,25 @@ const UPLOAD_OPTIONS: {
   },
 ];
 
-const ImageUploaderModal = ({
+const UploaderModal = ({
   isOpen,
   onClose,
   extraProps,
   disabled,
-  images: _images,
+  files: _files,
   onChange,
   multiple,
   hideDoneButton,
   onUploadFile,
   onDeleteFile,
   ...rest
-}: IImageUploaderModalProps) => {
+}: IUploaderModalProps) => {
   const [activeTab, setActiveTab] = useState(0);
-  const [progressMap, setProgressMap] = useState<number[]>([]);
+  const [progressMap, setProgressMap] = useState<number[]>([
+    ...Array(_files.length).fill(100),
+  ]);
   const [isUploading, setIsUploading] = useState(false);
-  const [images, setImages] = useState<IFileUploader.fileType[]>(_images || []);
+  const [files, setFiles] = useState<IMedia.FileData[]>(_files || []);
 
   const { uploadOptions = [] } = extraProps || {};
 
@@ -56,17 +58,17 @@ const ImageUploaderModal = ({
     });
   };
 
-  const handleChange = async (files: IFileUploader.fileType[]) => {
+  const handleChange = async (files: (IMedia.FileData | File)[]) => {
     const filesToUpload = files.filter(
       (file): file is File => file instanceof File
     );
 
     setProgressMap([
       ...Array(filesToUpload.length),
-      ...Array(_images.length).fill(100),
+      ...Array(_files.length).fill(100),
     ]);
 
-    setImages([
+    setFiles([
       ...filesToUpload.map((file) => ({
         fileUrl: URL.createObjectURL(file),
         fileName: file.name,
@@ -74,7 +76,7 @@ const ImageUploaderModal = ({
         fileSize: file.size,
         filePath: file.name,
       })),
-      ..._images,
+      ..._files,
     ]);
 
     onUploadFile && setIsUploading(true);
@@ -107,21 +109,21 @@ const ImageUploaderModal = ({
     });
 
     const results = await Promise.all(uploadPromises);
-    const successfulUploads = results.filter(
-      Boolean
-    ) as IFileUploader.fileType[];
+    const successfulUploads = results.filter(Boolean) as IMedia.FileData[];
 
     setIsUploading(false);
 
     if (multiple) {
-      onChange([..._images, ...successfulUploads]);
+      console.log(successfulUploads);
+
+      onChange([..._files, ...successfulUploads]);
     } else {
       onChange(successfulUploads);
     }
   };
 
   const handleRemove = (index: number) => {
-    onChange(_images.filter((_, indx) => indx !== index));
+    onChange(files.filter((_, indx) => indx !== index));
   };
 
   const VISIBLE_UPLOAD_OPTIONS = useMemo(() => {
@@ -157,7 +159,7 @@ const ImageUploaderModal = ({
                 title: "Done",
                 variant: "contained",
                 onClick: onClose,
-                hidden: !images.length,
+                hidden: !files.length,
                 sx: { mt: 2 },
               },
             ]
@@ -186,9 +188,9 @@ const ImageUploaderModal = ({
         />
       )}
 
-      {/* render images */}
-      <RenderImages
-        images={images}
+      {/* render files */}
+      <RenderMedia
+        media={files}
         onRemove={handleRemove}
         progressMap={progressMap}
       />
@@ -196,4 +198,4 @@ const ImageUploaderModal = ({
   );
 };
 
-export default ImageUploaderModal;
+export default UploaderModal;

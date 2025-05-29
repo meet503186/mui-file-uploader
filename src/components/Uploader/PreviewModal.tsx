@@ -3,12 +3,11 @@ import CloseIcon from "@mui/icons-material/Close";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useMemo } from "react";
-import { getFileUrl } from "./utils";
-import { IFileUploader } from "../../types";
+import { IMedia } from "../../types";
 
 interface IPreviewModalProps {
   onClose: () => void;
-  images: IFileUploader.fileType[];
+  images: IMedia.FileData[];
   activeImageIndex?: number;
   onChangeActiveImageIndex?: (newIndex: number) => void;
 }
@@ -24,7 +23,7 @@ export const ImagePreviewModal = ({
     return {
       hasNext: activeImageIndex < images.length - 1,
       hasPrevious: activeImageIndex > 0,
-      visibleImageUrl: getFileUrl(images[activeImageIndex]),
+      visibleImageUrl: images[activeImageIndex].fileUrl,
     };
   }, [activeImageIndex, images]);
 
