@@ -13,8 +13,6 @@ const UploadFromGallery = ({
   inputProps,
   onError,
 }: IFileUploader.UploadOption) => {
-  console.log(extraProps);
-
   const { maxFileSize = 5, supportedFiles = ["*"] } = extraProps || {};
 
   const supportedFilesString = useMemo(() => {

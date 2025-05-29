@@ -114,8 +114,6 @@ const UploaderModal = ({
     setIsUploading(false);
 
     if (multiple) {
-      console.log(successfulUploads);
-
       onChange([..._files, ...successfulUploads]);
     } else {
       onChange(successfulUploads);
@@ -123,7 +121,9 @@ const UploaderModal = ({
   };
 
   const handleRemove = (index: number) => {
-    onChange(files.filter((_, indx) => indx !== index));
+    const filteredFiles = _files.filter((_, indx) => indx !== index);
+    onChange(filteredFiles);
+    setFiles(filteredFiles);
   };
 
   const VISIBLE_UPLOAD_OPTIONS = useMemo(() => {
