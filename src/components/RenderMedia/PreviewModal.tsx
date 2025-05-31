@@ -112,13 +112,13 @@ const PreviewMedia = ({
 }) => {
   switch (getFileType(data)) {
     case "video":
-      return <Video src={data.fileUrl} controls />;
+      return <Video src={data.url} controls />;
 
     case "image":
-      return <Image src={data.fileUrl} alt={data.fileName} />;
+      return <Image src={data.url} alt={data.name} />;
 
     case "audio":
-      return <Audio src={data.fileUrl} />;
+      return <Audio src={data.url} />;
 
     case "document":
       return <Document data={data} />;

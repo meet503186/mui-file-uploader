@@ -8,6 +8,7 @@ import {
 } from "./utils";
 import { CameraFooter } from "./CameraFooter";
 import { IFileUploader } from "../../../../types";
+import { getFileMetaData } from "../../../../utils";
 
 const UploadFromCamera = ({ onChange }: IFileUploader.UploadOption) => {
   const [isCameraLoading, setIsCameraLoading] = useState(false);
@@ -24,16 +25,7 @@ const UploadFromCamera = ({ onChange }: IFileUploader.UploadOption) => {
   // handling accept picture
   const handleAcceptPicture = async () => {
     if (clickedPicture) {
-      const { name, size, type } = clickedPicture;
-      onChange([
-        {
-          fileName: name,
-          filePath: name,
-          fileSize: size,
-          fileType: type,
-          fileUrl: URL.createObjectURL(clickedPicture),
-        },
-      ]);
+      onChange([getFileMetaData(clickedPicture)]);
     }
     setClickedPicture(null);
   };

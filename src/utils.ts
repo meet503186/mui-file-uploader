@@ -39,8 +39,7 @@ export const filterFilesByMaxSize = ({
 // };
 
 export function getFileType(file: IMedia.FileData): string {
-  const name = file instanceof File ? file.name : file.fileName;
-  const ext = name.split(".").pop()?.toLowerCase();
+  const ext = file.name.split(".").pop()?.toLowerCase();
 
   if (!ext) return "unknown";
 
@@ -100,4 +99,21 @@ export async function compressImage({
     console.log(error);
     return file;
   }
+}
+
+export function getFileExtension(filePath: string): string {
+  if (!filePath) return "";
+  return filePath.split(".").pop() || "jpg";
+}
+
+export function getFileMetaData(file: File, filePath?: string) {
+  return {
+    url: URL.createObjectURL(file),
+    name: file.name,
+    type: file.type,
+    size: file.size,
+    path: filePath || file.name,
+    extension: getFileExtension(file.name),
+    file,
+  };
 }

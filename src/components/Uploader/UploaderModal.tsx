@@ -2,7 +2,7 @@ import CustomModal from "../CustomModal";
 import { IFileUploader, IMedia } from "../../types";
 import { useMemo, useState } from "react";
 import RenderUploadOption from "./RenderUploadOption";
-import { compressImage } from "../../utils";
+import { getFileMetaData } from "../../utils";
 import ScrollableTabs from "../ScrollableTabs";
 import RenderMedia from "../RenderMedia";
 
@@ -43,7 +43,9 @@ const UploaderModal = ({
     ...Array(_files.length).fill(100),
   ]);
   const [isUploading, setIsUploading] = useState(false);
-  const [files, setFiles] = useState<IMedia.FileData[]>(_files || []);
+  const [files, setFiles] = useState<IMedia.FileData[]>(
+    parseInputFiles(Array.isArray(_files) ? _files : [_files]) || []
+  );
 
   const { uploadOptions = [] } = extraProps || {};
 
@@ -68,25 +70,18 @@ const UploaderModal = ({
       ...Array(filesToUpload.length),
     ]);
 
-    setFiles([
-      ..._files,
-      ...filesToUpload.map((file) => ({
-        fileUrl: URL.createObjectURL(file),
-        fileName: file.name,
-        fileType: file.type,
-        fileSize: file.size,
-        filePath: file.name,
-      })),
-    ]);
+    setFiles(
+      multiple
+        ? [..._files, ...filesToUpload.map((file) => getFileMetaData(file))]
+        : [getFileMetaData(filesToUpload[0])]
+    );
 
     onUploadFile && setIsUploading(true);
 
     const uploadPromises = filesToUpload.map(async (file, index) => {
-      const compressedImage = await compressImage({ file });
-
       if (onUploadFile) {
         try {
-          const filePath = await onUploadFile(compressedImage, (progress) =>
+          const filePath = await onUploadFile(file, (progress) =>
             handleUploadProgress(
               progress,
               _files.length + index,
@@ -94,21 +89,16 @@ const UploaderModal = ({
             )
           );
 
-          return {
-            fileUrl: URL.createObjectURL(file),
-            fileName: compressedImage.name,
-            fileType: compressedImage.type,
-            fileSize: compressedImage.size,
-            filePath,
-          };
+          return getFileMetaData(file, filePath);
         } catch (error) {
           rest.onError?.(
             error instanceof Error ? error.message : "Upload failed"
           );
+          setFiles(_files);
           return null;
         }
       } else {
-        return compressedImage;
+        return getFileMetaData(file);
       }
     });
 
@@ -138,7 +128,7 @@ const UploaderModal = ({
 
   return (
     <CustomModal
-      title={"Upload Image(s)"}
+      title={"Upload File(s)"}
       isOpen={isOpen}
       onClose={!isUploading ? onClose : () => {}}
       sx={{
@@ -203,3 +193,26 @@ const UploaderModal = ({
 };
 
 export default UploaderModal;
+
+function parseInputFiles(
+  files: (string | File | IMedia.FileData)[]
+): IMedia.FileData[] {
+  return files.map((file, index) => {
+    if (typeof file === "string") {
+      const fileName = `filename${index + 1}.jpg`;
+      return {
+        name: fileName,
+        path: fileName,
+        size: 0,
+        type: "image/jpeg",
+        url: file,
+      };
+    }
+
+    if (file instanceof File) {
+      return getFileMetaData(file);
+    }
+
+    return file;
+  });
+}

@@ -34,7 +34,7 @@ const RenderMedia = ({ media, onRemove, progressMap }: IRenderMedia) => {
       {media.map((file, index: number) => {
         return (
           <Typography
-            key={file.fileName + index}
+            key={file.name + index}
             component={"div"}
             color="secondary"
             sx={{
@@ -71,7 +71,7 @@ const RenderMedia = ({ media, onRemove, progressMap }: IRenderMedia) => {
                   textOverflow: "ellipsis",
                 }}
               >
-                {file.fileName}
+                {file.name}
               </Typography>
             </Typography>
 
@@ -112,10 +112,8 @@ export default RenderMedia;
 
 const RenderMediaItem = ({ data }: { data: IMedia.FileData }) => {
   switch (getFileType(data)) {
-    case "image":
-      return <Image src={data.fileUrl} alt={data.fileName} />;
     case "video":
-      return <Video src={data.fileUrl} playIcon />;
+      return <Video src={data.url} playIcon />;
     case "audio":
       return <AudioPlaceholder />;
 
@@ -124,5 +122,9 @@ const RenderMediaItem = ({ data }: { data: IMedia.FileData }) => {
 
     case "pdf":
       return <PdfPlaceholder />;
+
+    case "image":
+    default:
+      return <Image src={data.url} alt={data.name} />;
   }
 };

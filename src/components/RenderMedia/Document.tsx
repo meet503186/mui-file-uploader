@@ -5,7 +5,7 @@ import { IMedia } from "../../types";
 
 const Document = ({ data }: { data: IMedia.FileData }) => {
   const handleRedirect = () => {
-    window.open(data.fileUrl);
+    window.open(data.url);
   };
 
   return (

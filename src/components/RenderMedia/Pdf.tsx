@@ -3,7 +3,7 @@ import { Box, SxProps } from "@mui/system";
 import { IMedia } from "../../types";
 
 const Pdf = ({ data }: { data: IMedia.FileData }) => {
-  return <iframe src={data.fileUrl} width="100%" height="600px" />;
+  return <iframe src={data.url} width="100%" height="600px" />;
 };
 
 export default Pdf;

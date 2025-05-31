@@ -23,7 +23,7 @@ export const ImagePreviewModal = ({
     return {
       hasNext: activeImageIndex < images.length - 1,
       hasPrevious: activeImageIndex > 0,
-      visibleImageUrl: images[activeImageIndex].fileUrl,
+      visibleImageUrl: images[activeImageIndex].url,
     };
   }, [activeImageIndex, images]);
 
