@@ -21,7 +21,7 @@ export namespace IFileUploader {
       file: File,
       onUploadProgress: (progress: number) => void
     ) => Promise<string>;
-    onDeleteFile?: (file: File) => Promise<string>;
+    onDeleteFile?: (id: number) => Promise<void>;
     getLocalizedText?: (text: string, params?: Record<string, any>) => string;
   }
 
@@ -67,6 +67,7 @@ export namespace IMedia {
   export type type = "image" | "video" | "audio" | "document" | "pdf";
 
   export interface FileData {
+    id?: number;
     url: string;
     type: string;
     name: string;

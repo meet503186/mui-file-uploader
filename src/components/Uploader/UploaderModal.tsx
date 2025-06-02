@@ -117,7 +117,11 @@ const UploaderModal = ({
     }
   };
 
-  const handleRemove = (index: number) => {
+  const handleRemove = async (index: number) => {
+    if (onDeleteFile && _files[index].id) {
+      await onDeleteFile(_files[index].id);
+    }
+
     const filteredFiles = _files.filter((_, indx) => indx !== index);
     onChange(filteredFiles);
     setFiles(filteredFiles);
@@ -192,6 +196,7 @@ const UploaderModal = ({
         media={files}
         onRemove={handleRemove}
         progressMap={progressMap}
+        required={!rest.isOptional}
       />
     </CustomModal>
   );

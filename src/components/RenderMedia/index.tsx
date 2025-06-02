@@ -17,9 +17,15 @@ interface IRenderMedia {
   media: IMedia.FileData[];
   onRemove: (index: number) => void;
   progressMap: number[];
+  required: boolean;
 }
 
-const RenderMedia = ({ media, onRemove, progressMap }: IRenderMedia) => {
+const RenderMedia = ({
+  media,
+  onRemove,
+  progressMap,
+  required,
+}: IRenderMedia) => {
   const [previewData, setPreviewData] = useState<{
     selectedIndex: number;
   } | null>(null);
@@ -89,7 +95,10 @@ const RenderMedia = ({ media, onRemove, progressMap }: IRenderMedia) => {
                 <IconButton onClick={() => onView(index)}>
                   <VisibilityIcon fontSize="small" />
                 </IconButton>
-                <IconButton onClick={() => onRemove(index)}>
+                <IconButton
+                  onClick={() => onRemove(index)}
+                  disabled={media.length === 1 && required}
+                >
                   <DeleteIcon fontSize="small" color="error" />
                 </IconButton>
               </Typography>
