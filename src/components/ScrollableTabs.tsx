@@ -11,6 +11,7 @@ interface ScrollableTabsProps {
   activeTab: number;
   renderContent: React.ReactNode;
   tabsProps?: TabsProps;
+  getLocalizedText?: (text: string, params?: Record<string, any>) => string;
 }
 
 function ScrollableTabs({
@@ -19,6 +20,7 @@ function ScrollableTabs({
   activeTab,
   renderContent,
   tabsProps,
+  getLocalizedText,
 }: ScrollableTabsProps) {
   const theme = useTheme();
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
@@ -42,20 +44,22 @@ function ScrollableTabs({
         }}
         {...tabsProps}
       >
-        {groups.map(({ label }, index) => (
-          <Tab
-            key={label}
-            label={label}
-            tabIndex={index}
-            sx={{
-              fontWeight: "bold",
+        {groups.map(({ label, _key }, index) => {
+          return (
+            <Tab
+              key={_key}
+              label={getLocalizedText?.(`${_key}`) || label}
+              tabIndex={index}
+              sx={{
+                fontWeight: "bold",
 
-              "&.Mui-selected": {
-                color: theme.palette.primary.main, // Selected tab text color
-              },
-            }}
-          />
-        ))}
+                "&.Mui-selected": {
+                  color: theme.palette.primary.main, // Selected tab text color
+                },
+              }}
+            />
+          );
+        })}
       </Tabs>
 
       <Box sx={{ my: 2 }}>{renderContent}</Box>

@@ -13,6 +13,7 @@ const FileUploader = ({
   hideDoneButton = false,
   onUploadFile,
   onDeleteFile,
+  getLocalizedText,
   ...rest
 }: IFileUploader.Props) => {
   const [showModal, setShowModal] = useState(false);
@@ -28,7 +29,9 @@ const FileUploader = ({
       {/* visible component */}
 
       <TextField
-        label={`${label} ${count ? `(${files.length})` : ""}`}
+        label={`${getLocalizedText?.(label)} ${
+          count ? `(${files.length})` : ""
+        }`}
         size="small"
         variant="outlined"
         value={files.map((file) => file.name).join(", ")}
@@ -36,6 +39,7 @@ const FileUploader = ({
         fullWidth
         error={!!error}
         helperText={error}
+        sx={{ cursor: "pointer" }}
         slotProps={{
           inputLabel: {
             shrink: !!files.length,
@@ -67,6 +71,7 @@ const FileUploader = ({
           hideDoneButton={hideDoneButton}
           onUploadFile={onUploadFile}
           onDeleteFile={onDeleteFile}
+          getLocalizedText={getLocalizedText}
           {...rest}
         />
       )}

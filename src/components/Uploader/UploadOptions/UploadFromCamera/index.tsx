@@ -10,7 +10,10 @@ import { CameraFooter } from "./CameraFooter";
 import { IFileUploader } from "../../../../types";
 import { getFileMetaData } from "../../../../utils";
 
-const UploadFromCamera = ({ onChange }: IFileUploader.UploadOption) => {
+const UploadFromCamera = ({
+  onChange,
+  getLocalizedText,
+}: IFileUploader.UploadOption) => {
   const [isCameraLoading, setIsCameraLoading] = useState(false);
   const [selectedDeviceId, setSelectedDeviceId] = useState("");
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
@@ -154,7 +157,7 @@ const UploadFromCamera = ({ onChange }: IFileUploader.UploadOption) => {
               transform: "translate(-50%, -50%)",
             }}
           >
-            Loading...
+            {getLocalizedText?.("loading") || "Loading..."}
           </Typography>
         )}
 

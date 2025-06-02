@@ -12,12 +12,16 @@ const UploadFromGallery = ({
   extraProps,
   inputProps,
   onError,
+  getLocalizedText,
 }: IFileUploader.UploadOption) => {
   const { maxFileSize = 5, supportedFiles = ["*"] } = extraProps || {};
 
   const supportedFilesString = useMemo(() => {
     if (supportedFiles.includes("*")) {
-      return "All file types are supported";
+      return (
+        getLocalizedText?.("allFileTypesSupported") ||
+        "All file types are supported"
+      );
     }
 
     const friendlyTypesMap: Record<string, string> = {
@@ -41,7 +45,9 @@ const UploadFromGallery = ({
       .map((type) => friendlyTypesMap[type] || type)
       .filter((value, index, self) => self.indexOf(value) === index); // remove duplicates
 
-    return `Supported files: ${friendlyNames.join(", ")}`;
+    return `${
+      getLocalizedText?.("supportedFiles") || "Supported files"
+    }: ${friendlyNames.join(", ")}`;
   }, [supportedFiles]);
 
   return (
@@ -74,7 +80,7 @@ const UploadFromGallery = ({
           </Typography>
 
           <Typography component={"span"} color={"textPrimary"}>
-            Drop your file here, or <a>browse</a>
+            {getLocalizedText?.("dropFile") || "Drop your file here, or browse"}
           </Typography>
 
           <Typography component={"span"} sx={{ fontSize: 14 }}>
@@ -82,7 +88,8 @@ const UploadFromGallery = ({
           </Typography>
 
           <Typography component={"span"} color="warning" sx={{ fontSize: 12 }}>
-            Max file size {maxFileSize}MB
+            {getLocalizedText?.("maxFileSize", { size: maxFileSize }) ||
+              `Max file size ${maxFileSize}MB`}
           </Typography>
         </Typography>
         <input
@@ -102,7 +109,10 @@ const UploadFromGallery = ({
               });
 
               if (files.length < e.target.files.length) {
-                onError?.("Ignoring files greater than max size");
+                onError?.(
+                  getLocalizedText?.("ignoringFilesGreaterSize") ||
+                    "Ignoring files greater than max size"
+                );
               }
               onChange(files);
             }

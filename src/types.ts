@@ -22,6 +22,7 @@ export namespace IFileUploader {
       onUploadProgress: (progress: number) => void
     ) => Promise<string>;
     onDeleteFile?: (file: File) => Promise<string>;
+    getLocalizedText?: (text: string, params?: Record<string, any>) => string;
   }
 
   interface ExtraProps {

@@ -36,6 +36,7 @@ const UploaderModal = ({
   hideDoneButton,
   onUploadFile,
   onDeleteFile,
+  getLocalizedText,
   ...rest
 }: IUploaderModalProps) => {
   const [activeTab, setActiveTab] = useState(0);
@@ -92,7 +93,9 @@ const UploaderModal = ({
           return getFileMetaData(file, filePath);
         } catch (error) {
           rest.onError?.(
-            error instanceof Error ? error.message : "Upload failed"
+            error instanceof Error
+              ? error.message
+              : getLocalizedText?.("uploadFailed") || "Upload failed"
           );
           setFiles(_files);
           return null;
@@ -128,7 +131,7 @@ const UploaderModal = ({
 
   return (
     <CustomModal
-      title={"Upload File(s)"}
+      title={getLocalizedText?.("uploadFile") || "Upload File(s)"}
       isOpen={isOpen}
       onClose={!isUploading ? onClose : () => {}}
       sx={{
@@ -150,7 +153,7 @@ const UploaderModal = ({
         !hideDoneButton && !isUploading
           ? [
               {
-                title: "Done",
+                title: getLocalizedText?.("done") || "Done",
                 variant: "contained",
                 onClick: onClose,
                 hidden: !files.length,
@@ -169,6 +172,7 @@ const UploaderModal = ({
           tabsProps={{
             scrollButtons: false,
           }}
+          getLocalizedText={getLocalizedText}
           renderContent={
             <RenderUploadOption
               uploadOption={VISIBLE_UPLOAD_OPTIONS[activeTab]?._key}
@@ -176,6 +180,7 @@ const UploaderModal = ({
               onChange={handleChange}
               multiple={multiple}
               disabled={isUploading}
+              getLocalizedText={getLocalizedText}
               {...rest}
             />
           }
