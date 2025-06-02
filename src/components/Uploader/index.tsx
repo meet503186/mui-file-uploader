@@ -28,7 +28,7 @@ const FileUploader = ({
       {/* visible component */}
 
       <TextField
-        label={`${label} ${count && `(${files.length})`}`}
+        label={`${label} ${count ? `(${files.length})` : ""}`}
         size="small"
         variant="outlined"
         value={files.map((file) => file.name).join(", ")}
