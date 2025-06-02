@@ -2,8 +2,8 @@ import * as React from "react";
 import Tabs, { TabsProps } from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import { IFileUploader } from "../types";
+import { useTheme } from "@mui/material";
 
 interface ScrollableTabsProps {
   groups: IFileUploader.ITabGroup[];
@@ -20,15 +20,13 @@ function ScrollableTabs({
   renderContent,
   tabsProps,
 }: ScrollableTabsProps) {
+  const theme = useTheme();
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     onTabChange(newValue);
   };
 
   return (
-    <Box
-      sx={{ maxWidth: "100%", bgcolor: "background.paper", borderRadius: 1 }}
-    >
-      <Typography variant="h6" sx={{ textAlign: "center" }}></Typography>
+    <Box sx={{ maxWidth: "100%", borderRadius: 1 }}>
       <Tabs
         value={activeTab}
         onChange={handleChange}
@@ -37,6 +35,11 @@ function ScrollableTabs({
         allowScrollButtonsMobile
         aria-label="custom scrollable tabs"
         sx={{ justifyContent: "center" }}
+        slotProps={{
+          indicator: {
+            sx: { bgcolor: theme.palette.primary.main },
+          },
+        }}
         {...tabsProps}
       >
         {groups.map(({ label }, index) => (
@@ -44,7 +47,13 @@ function ScrollableTabs({
             key={label}
             label={label}
             tabIndex={index}
-            sx={{ fontWeight: "bold", color: "primary.main" }}
+            sx={{
+              fontWeight: "bold",
+
+              "&.Mui-selected": {
+                color: theme.palette.primary.main, // Selected tab text color
+              },
+            }}
           />
         ))}
       </Tabs>
