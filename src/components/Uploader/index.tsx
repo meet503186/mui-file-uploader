@@ -3,7 +3,6 @@ import ImageIcon from "@mui/icons-material/Image";
 import { IFileUploader } from "../../types";
 import UploaderModal from "./UploaderModal";
 import { useState } from "react";
-import { stopStreamedVideo } from "./UploadOptions/UploadFromCamera/utils";
 
 const FileUploader = ({
   error,
@@ -18,7 +17,6 @@ const FileUploader = ({
 }: IFileUploader.Props) => {
   const [showModal, setShowModal] = useState(false);
   const handleCloseModal = () => {
-    stopStreamedVideo();
     setShowModal(false);
   };
 

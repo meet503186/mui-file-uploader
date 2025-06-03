@@ -77,8 +77,7 @@ const UploadFromCamera = ({
 
   const playMediaStream = (deviceId?: string) => {
     if (streamRef.current) {
-      // Stop the current stream before switching
-      streamRef.current.getTracks().forEach((track: any) => track.stop());
+      stopMediaStream();
     }
 
     getMedia(deviceId).then((mediaStream) => {
@@ -91,6 +90,22 @@ const UploadFromCamera = ({
         };
       }
     });
+  };
+
+  const stopMediaStream = () => {
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+      videoRef.current.src = "";
+    }
+
+    if (streamRef.current) {
+      console.log("stopping track");
+
+      const track = streamRef.current.getVideoTracks()[0];
+      track.stop();
+      track.enabled = false;
+      streamRef.current = null;
+    }
   };
 
   const getDevices = async () => {
@@ -111,6 +126,10 @@ const UploadFromCamera = ({
   useEffect(() => {
     getDevices();
     setIsCameraLoading(true);
+
+    return () => {
+      stopMediaStream();
+    };
   }, []);
 
   return (
