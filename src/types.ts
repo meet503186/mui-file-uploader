@@ -16,12 +16,12 @@ export namespace IFileUploader {
     onError?: (error: string) => void;
     size?: TextFieldProps["size"];
     count?: boolean;
-    hideDoneButton?: boolean;
     onUploadFile?: (
       file: File,
       onUploadProgress: (progress: number) => void
     ) => Promise<string>;
     onDeleteFile?: (id: number) => Promise<void>;
+    onSubmit?: () => Promise<void>;
     getLocalizedText?: (text: string, params?: Record<string, any>) => string;
   }
 

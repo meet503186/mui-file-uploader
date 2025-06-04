@@ -9,9 +9,6 @@ const FileUploader = ({
   files = [],
   size,
   count = false,
-  hideDoneButton = false,
-  onUploadFile,
-  onDeleteFile,
   getLocalizedText,
   ...rest
 }: IFileUploader.Props) => {
@@ -66,9 +63,6 @@ const FileUploader = ({
           isOpen={showModal}
           onClose={handleCloseModal}
           files={files}
-          hideDoneButton={hideDoneButton}
-          onUploadFile={onUploadFile}
-          onDeleteFile={onDeleteFile}
           getLocalizedText={getLocalizedText}
           {...rest}
         />

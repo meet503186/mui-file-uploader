@@ -33,10 +33,10 @@ const UploaderModal = ({
   files: _files,
   onChange,
   multiple,
-  hideDoneButton,
   onUploadFile,
   onDeleteFile,
   getLocalizedText,
+  onSubmit,
   ...rest
 }: IUploaderModalProps) => {
   const [activeTab, setActiveTab] = useState(0);
@@ -127,17 +127,35 @@ const UploaderModal = ({
     setFiles(filteredFiles);
   };
 
+  const handleCancel = () => {
+    const filteredFiles = _files.filter((file) => file.id);
+    onChange(filteredFiles);
+    setFiles(filteredFiles);
+    onClose();
+  };
+
+  const handleSubmit = async () => {
+    if (onSubmit) {
+      await onSubmit();
+    }
+
+    onClose();
+  };
+
   const VISIBLE_UPLOAD_OPTIONS = useMemo(() => {
     return uploadOptions.length
       ? UPLOAD_OPTIONS.filter(({ _key }) => !!uploadOptions.includes(_key))
       : UPLOAD_OPTIONS;
   }, [uploadOptions]);
 
+  const isUploadDisabled = useMemo(() => {
+    return !files.some((file) => !file.id) || isUploading;
+  }, [files, isUploading]);
+
   return (
     <CustomModal
       title={getLocalizedText?.("uploadFile") || "Upload File(s)"}
       isOpen={isOpen}
-      onClose={!isUploading ? onClose : () => {}}
       sx={{
         width: {
           xs: "90%",
@@ -153,19 +171,22 @@ const UploaderModal = ({
         overflow: "auto",
       }}
       className="hide-scrollbar"
-      buttons={
-        !hideDoneButton && !isUploading
-          ? [
-              {
-                title: getLocalizedText?.("done") || "Done",
-                variant: "contained",
-                onClick: onClose,
-                hidden: !files.length,
-                sx: { mt: 2 },
-              },
-            ]
-          : []
-      }
+      buttons={[
+        {
+          title: getLocalizedText?.("cancel") || "Cancel",
+          variant: "outlined",
+          disabled: isUploading,
+          onClick: handleCancel,
+          sx: { mt: 2 },
+        },
+        {
+          title: getLocalizedText?.("submit") || "Submit",
+          variant: "contained",
+          disabled: isUploadDisabled,
+          onClick: handleSubmit,
+          sx: { mt: 2 },
+        },
+      ]}
     >
       {/* Upload options (tabs) */}
       {!disabled && (
