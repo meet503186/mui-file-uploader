@@ -68,7 +68,9 @@ const UploaderModal = ({
 
     setProgressMap([
       ...Array(_files.length).fill(100),
-      ...Array(filesToUpload.length),
+      ...(onUploadFile
+        ? Array(filesToUpload.length)
+        : Array(filesToUpload.length).fill(100)),
     ]);
 
     setFiles(
@@ -128,9 +130,12 @@ const UploaderModal = ({
   };
 
   const handleCancel = () => {
-    const filteredFiles = _files.filter((file) => file.id);
-    onChange(filteredFiles);
-    setFiles(filteredFiles);
+    if (onUploadFile) {
+      const filteredFiles = _files.filter((file) => file.id);
+      onChange(filteredFiles);
+      setFiles(filteredFiles);
+    }
+
     onClose();
   };
 
