@@ -10,7 +10,7 @@ export namespace IFileUploader {
     multiple?: boolean;
     disabled?: boolean;
     files: IMedia.FileData[];
-    onChange: (files: IMedia.FileData[]) => void;
+    onChange: (files: (IMedia.FileData | File)[]) => void;
     inputProps?: InputHTMLAttributes<HTMLInputElement>;
     extraProps?: ExtraProps;
     onError?: (error: string) => void;

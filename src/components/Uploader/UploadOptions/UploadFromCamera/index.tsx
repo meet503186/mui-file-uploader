@@ -8,7 +8,7 @@ import {
 } from "./utils";
 import { CameraFooter } from "./CameraFooter";
 import { IFileUploader } from "../../../../types";
-import { getFileMetaData } from "../../../../utils";
+import CAPTURE_SOUND from "../../../../assets/camera-click.wav";
 
 const UploadFromCamera = ({
   onChange,
@@ -28,7 +28,7 @@ const UploadFromCamera = ({
   // handling accept picture
   const handleAcceptPicture = async () => {
     if (clickedPicture) {
-      onChange([getFileMetaData(clickedPicture)]);
+      onChange([clickedPicture]);
     }
     setClickedPicture(null);
   };
@@ -184,7 +184,7 @@ const UploadFromCamera = ({
         <audio
           ref={audioRef}
           style={{ display: "none" }}
-          src={"/camera-click.wav"}
+          src={CAPTURE_SOUND}
         ></audio>
 
         {/* Rendering camera options */}
