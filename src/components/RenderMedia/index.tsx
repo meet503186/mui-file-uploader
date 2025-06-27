@@ -18,6 +18,7 @@ interface IRenderMedia {
   onRemove: (index: number) => void;
   progressMap: number[];
   required: boolean;
+  disabled?: boolean;
 }
 
 const RenderMedia = ({
@@ -25,6 +26,7 @@ const RenderMedia = ({
   onRemove,
   progressMap,
   required,
+  disabled,
 }: IRenderMedia) => {
   const [previewData, setPreviewData] = useState<{
     selectedIndex: number;
@@ -36,7 +38,7 @@ const RenderMedia = ({
   }, []);
 
   return (
-    <Typography component={"div"}>
+    <Typography component={"div"} sx={{ mt: disabled ? 1 : 0 }}>
       {media.map((file, index: number) => {
         return (
           <Typography
@@ -95,12 +97,14 @@ const RenderMedia = ({
                 <IconButton onClick={() => onView(index)}>
                   <VisibilityIcon fontSize="small" />
                 </IconButton>
-                <IconButton
-                  onClick={() => onRemove(index)}
-                  disabled={media.length === 1 && required}
-                >
-                  <DeleteIcon fontSize="small" color="error" />
-                </IconButton>
+                {!disabled && (
+                  <IconButton
+                    onClick={() => onRemove(index)}
+                    disabled={media.length === 1 && required}
+                  >
+                    <DeleteIcon fontSize="small" color="error" />
+                  </IconButton>
+                )}
               </Typography>
             )}
           </Typography>

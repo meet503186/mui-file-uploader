@@ -77,11 +77,14 @@ const CustomModal = ({
                   gap: 2,
                 }}
               >
-                {buttons.map(({ title, ...rest }) => (
-                  <Button key={title} {...rest}>
-                    {title}
-                  </Button>
-                ))}
+                {buttons.map(
+                  ({ title, hidden, ...rest }) =>
+                    !hidden && (
+                      <Button key={title} {...rest}>
+                        {title}
+                      </Button>
+                    )
+                )}
               </Typography>
             </ModalFooter>
           )}

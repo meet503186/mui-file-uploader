@@ -188,6 +188,7 @@ const UploaderModal = ({
           title: getLocalizedText?.("submit") || "Submit",
           variant: "contained",
           disabled: isUploadDisabled,
+          hidden: disabled,
           onClick: handleSubmit,
           sx: { mt: 2 },
         },
@@ -223,6 +224,7 @@ const UploaderModal = ({
         onRemove={handleRemove}
         progressMap={progressMap}
         required={!rest.isOptional}
+        disabled={disabled}
       />
     </CustomModal>
   );
