@@ -1,4 +1,4 @@
-import { IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 import FlipIcon from "@mui/icons-material/Flip";
@@ -26,7 +26,7 @@ export const CameraFooter = ({
   onMirror,
 }: ICameraFooterProps) => {
   return (
-    <Typography
+    <Box
       component={"div"}
       sx={{
         position: "absolute",
@@ -34,8 +34,9 @@ export const CameraFooter = ({
         background: "rgba(0, 0, 0, 0.5)",
         width: "100%",
         zIndex: 9999,
-        p: 2,
         height: 80,
+        display: "flex",
+        alignItems: "center",
       }}
     >
       {isPictureClicked ? (
@@ -86,6 +87,6 @@ export const CameraFooter = ({
           ></button>
         </Typography>
       )}
-    </Typography>
+    </Box>
   );
 };
