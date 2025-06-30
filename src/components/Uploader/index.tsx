@@ -34,8 +34,10 @@ const FileUploader = ({
         fullWidth
         error={!!error}
         helperText={error}
-        sx={{ cursor: "pointer" }}
         slotProps={{
+          htmlInput: {
+            sx: { cursor: "pointer" },
+          },
           inputLabel: {
             shrink: !!files.length,
             sx: { ml: files.length ? 0 : 3 },
