@@ -67,7 +67,7 @@ const UploaderModal = ({
     );
 
     setProgressMap([
-      ...Array(_files.length).fill(100),
+      ...(multiple ? Array(_files.length).fill(100) : []),
       ...(onUploadFile
         ? Array(filesToUpload.length)
         : Array(filesToUpload.length).fill(100)),
@@ -87,7 +87,7 @@ const UploaderModal = ({
           const filePath = await onUploadFile(file, (progress) =>
             handleUploadProgress(
               progress,
-              _files.length + index,
+              multiple ? _files.length + index : index,
               filesToUpload.length
             )
           );
