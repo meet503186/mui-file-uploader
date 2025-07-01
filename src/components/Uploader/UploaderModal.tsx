@@ -66,6 +66,8 @@ const UploaderModal = ({
       (file): file is File => file instanceof File
     );
 
+    if (!filesToUpload.length) return;
+
     setProgressMap([
       ...(multiple ? Array(_files.length).fill(100) : []),
       ...(onUploadFile

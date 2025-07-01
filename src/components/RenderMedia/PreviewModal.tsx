@@ -114,9 +114,6 @@ const PreviewMedia = ({
     case "video":
       return <Video src={data.url} controls />;
 
-    case "image":
-      return <Image src={data.url} alt={data.name} />;
-
     case "audio":
       return <Audio src={data.url} />;
 
@@ -125,6 +122,10 @@ const PreviewMedia = ({
 
     case "pdf":
       return <Pdf data={data} />;
+
+    case "image":
+    default:
+      return <Image src={data.url} alt={data.name} />;
   }
 };
 
