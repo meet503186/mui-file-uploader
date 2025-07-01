@@ -7,8 +7,12 @@ const Image = ({
   alt = "Media image",
   width = "100%",
   height = "100%",
+  containerStyle = {},
   style = {},
-}: ImgHTMLAttributes<HTMLImageElement>) => {
+  ...rest
+}: ImgHTMLAttributes<HTMLImageElement> & {
+  containerStyle?: Record<string, any>;
+}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -22,7 +26,7 @@ const Image = ({
       justifyContent="center"
       borderRadius={1}
       overflow="hidden"
-      style={style}
+      style={containerStyle}
     >
       {loading && !error && <CircularProgress size={32} />}
 
@@ -42,7 +46,9 @@ const Image = ({
             width: "100%",
             height: "100%",
             objectFit: "cover",
+            ...style,
           }}
+          {...rest}
         />
       ) : (
         <Box display="flex" flexDirection="column" alignItems="center">

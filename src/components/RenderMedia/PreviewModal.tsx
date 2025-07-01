@@ -125,7 +125,13 @@ const PreviewMedia = ({
 
     case "image":
     default:
-      return <Image src={data.url} alt={data.name} />;
+      return (
+        <Image
+          src={data.url}
+          alt={data.name}
+          style={{ objectFit: "contain" }}
+        />
+      );
   }
 };
 
