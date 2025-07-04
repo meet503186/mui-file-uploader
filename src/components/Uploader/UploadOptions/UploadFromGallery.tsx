@@ -50,6 +50,21 @@ const UploadFromGallery = ({
     }: ${friendlyNames.join(", ")}`;
   }, [supportedFiles]);
 
+  const handleChange = (files: FileList) => {
+    const filteredFiles = filterFilesByMaxSize({
+      files,
+      maxSize: maxFileSize,
+    });
+
+    if (filteredFiles.length < files.length) {
+      onError?.(
+        getLocalizedText?.("ignoringFilesGreaterSize") ||
+          "Ignoring files greater than max size"
+      );
+    }
+    onChange(filteredFiles);
+  };
+
   return (
     <Typography component={"div"}>
       <Typography
@@ -65,6 +80,12 @@ const UploadFromGallery = ({
           alignItems: "center",
           justifyContent: "center",
           cursor: "pointer",
+        }}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+
+          handleChange(e.dataTransfer.files);
         }}
       >
         <Typography
@@ -103,18 +124,7 @@ const UploadFromGallery = ({
           disabled={disabled}
           onChange={(e) => {
             if (e.target.files) {
-              const files = filterFilesByMaxSize({
-                files: e.target.files,
-                maxSize: maxFileSize,
-              });
-
-              if (files.length < e.target.files.length) {
-                onError?.(
-                  getLocalizedText?.("ignoringFilesGreaterSize") ||
-                    "Ignoring files greater than max size"
-                );
-              }
-              onChange(files);
+              handleChange(e.target.files);
             }
           }}
           {...inputProps}
