@@ -2,7 +2,7 @@ import CustomModal from "../CustomModal";
 import { IFileUploader, IMedia } from "../../types";
 import { useMemo, useState } from "react";
 import RenderUploadOption from "./RenderUploadOption";
-import { getFileMetaData } from "../../utils";
+import { checkIsMobile, getFileMetaData } from "../../utils";
 import ScrollableTabs from "../ScrollableTabs";
 import RenderMedia from "../RenderMedia";
 
@@ -149,11 +149,17 @@ const UploaderModal = ({
     onClose();
   };
 
+  const isMobile = checkIsMobile();
+
   const VISIBLE_UPLOAD_OPTIONS = useMemo(() => {
+    if (isMobile) {
+      return [UPLOAD_OPTIONS[0]];
+    }
+
     return uploadOptions.length
       ? UPLOAD_OPTIONS.filter(({ _key }) => !!uploadOptions.includes(_key))
       : UPLOAD_OPTIONS;
-  }, [uploadOptions]);
+  }, [uploadOptions, isMobile]);
 
   const isUploadDisabled = useMemo(() => {
     return !files.some((file) => !file.id) || isUploading;
