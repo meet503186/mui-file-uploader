@@ -40,7 +40,11 @@ const FileUploader = ({
           },
           inputLabel: {
             shrink: !!files.length,
-            sx: { ml: files.length ? 0 : 3 },
+            sx: {
+              pl: files.length ? 0 : 3,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            },
           },
           input: {
             sx: {
