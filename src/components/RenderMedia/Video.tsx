@@ -5,13 +5,13 @@ import React, {
   useState,
   VideoHTMLAttributes,
 } from "react";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, useTheme } from "@mui/material";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import { PlayCircle } from "@mui/icons-material";
 
 const Video: React.FC<
   VideoHTMLAttributes<HTMLVideoElement> & {
-    playIcon?: boolean;
+    isPlaceholder?: boolean;
   }
 > = ({
   src,
@@ -19,9 +19,10 @@ const Video: React.FC<
   width = "100%",
   height = "100%",
   style = {},
-  playIcon,
+  isPlaceholder,
   ...rest
 }) => {
+  const theme = useTheme();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -50,13 +51,22 @@ const Video: React.FC<
       justifyContent="center"
       borderRadius={1}
       overflow="hidden"
-      style={{ aspectRatio: 1, background: "#000", ...style }}
+      style={{
+        aspectRatio: 1,
+        background: isPlaceholder ? "inherit" : "black",
+        ...style,
+      }}
     >
       {loading && !error && <CircularProgress size={32} />}
 
-      {!loading && !error && !!playIcon && (
+      {!loading && !error && !!isPlaceholder && (
         <PlayCircle
-          sx={{ fontSize: "auto", zIndex: 10, position: "absolute" }}
+          sx={{
+            fontSize: "auto",
+            zIndex: 10,
+            position: "absolute",
+            color: theme.palette.primary.main,
+          }}
         />
       )}
 
@@ -74,8 +84,8 @@ const Video: React.FC<
             width: "100%",
             // height: "100%",
             aspectRatio: 1,
-            objectFit: "cover",
-            opacity: 0.7,
+            objectFit: isPlaceholder ? "cover" : "contain",
+            opacity: isPlaceholder ? 0.7 : 1,
           }}
           {...rest}
         />

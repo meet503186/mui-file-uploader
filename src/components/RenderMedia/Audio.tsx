@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, CircularProgress, SxProps, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  SxProps,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import VolumeOffIcon from "@mui/icons-material/VolumeOff";
 import HeadsetIcon from "@mui/icons-material/Headset";
 
@@ -98,6 +104,8 @@ export const AudioPlaceholder = ({
   sx?: SxProps;
   containerSx?: SxProps;
 }) => {
+  const theme = useTheme();
+
   return (
     <Box
       sx={{
@@ -109,7 +117,9 @@ export const AudioPlaceholder = ({
         ...containerSx,
       }}
     >
-      <HeadsetIcon color="primary" sx={{ fontSize: "auto", ...sx }} />
+      <HeadsetIcon
+        sx={{ fontSize: "auto", color: theme.palette.primary.main, ...sx }}
+      />
     </Box>
   );
 };

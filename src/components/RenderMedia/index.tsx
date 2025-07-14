@@ -64,9 +64,18 @@ const RenderMedia = ({
                 alignItems: "center",
                 gap: 0.5,
                 maxWidth: "80%",
+                justifyContent: "center",
               }}
             >
-              <Box sx={{ width: 30, height: 30 }}>
+              <Box
+                sx={{
+                  width: "30px",
+                  height: "30px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
                 <RenderMediaItem data={file} />
               </Box>
               <Typography
@@ -77,6 +86,7 @@ const RenderMedia = ({
                   overflow: "hidden",
                   whiteSpace: "nowrap",
                   textOverflow: "ellipsis",
+                  flex: 1,
                 }}
               >
                 {file.name}
@@ -126,7 +136,7 @@ export default RenderMedia;
 const RenderMediaItem = ({ data }: { data: IMedia.FileData }) => {
   switch (getFileType(data)) {
     case "video":
-      return <Video src={data.url} playIcon />;
+      return <Video src={data.url} isPlaceholder />;
     case "audio":
       return <AudioPlaceholder />;
 

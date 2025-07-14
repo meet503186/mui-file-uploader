@@ -1,4 +1,4 @@
-import { Box, SxProps } from "@mui/material";
+import { Box, SxProps, useTheme } from "@mui/material";
 import DescriptionIcon from "@mui/icons-material/Description";
 import LaunchIcon from "@mui/icons-material/Launch";
 import { IMedia } from "../../types";
@@ -49,6 +49,8 @@ export const DocumentPlaceholder = ({
   sx?: SxProps;
   containerSx?: SxProps;
 }) => {
+  const theme = useTheme();
+
   return (
     <Box
       sx={{
@@ -60,7 +62,9 @@ export const DocumentPlaceholder = ({
         ...containerSx,
       }}
     >
-      <DescriptionIcon color="primary" sx={{ fontSize: "auto", ...sx }} />
+      <DescriptionIcon
+        sx={{ fontSize: "auto", color: theme.palette.primary.main, ...sx }}
+      />
     </Box>
   );
 };
