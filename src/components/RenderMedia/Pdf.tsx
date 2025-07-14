@@ -1,10 +1,40 @@
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import { Box, SxProps } from "@mui/system";
 import { IMedia } from "../../types";
-import { useTheme } from "@mui/material";
+import { CircularProgress, useTheme } from "@mui/material";
+import { useCallback, useState } from "react";
 
 const Pdf = ({ data }: { data: IMedia.FileData }) => {
-  return <iframe src={data.url} width="100%" height="600px" />;
+  const [isLoading, setIsLoading] = useState(true);
+
+  const handleLoad = useCallback(() => {
+    setIsLoading(false);
+  }, []);
+
+  return (
+    <>
+      {isLoading && (
+        <CircularProgress
+          size={40}
+          sx={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            translate: "-50% -50%",
+          }}
+        />
+      )}
+      <iframe
+        src={`https://docs.google.com/gview?url=${encodeURIComponent(
+          data.url
+        )}&embedded=true`}
+        width="100%"
+        height="600px"
+        style={{ border: "none" }}
+        onLoad={handleLoad}
+      />
+    </>
+  );
 };
 
 export default Pdf;
