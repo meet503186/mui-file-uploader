@@ -1,7 +1,6 @@
 import { Box, SxProps, useTheme } from "@mui/material";
-import DescriptionIcon from "@mui/icons-material/Description";
-import LaunchIcon from "@mui/icons-material/Launch";
 import { IMedia } from "../../types";
+import { DescriptionIcon, LaunchIcon } from "../../assets/icons/IconRegistery";
 
 const Document = ({ data }: { data: IMedia.FileData }) => {
   const handleRedirect = () => {

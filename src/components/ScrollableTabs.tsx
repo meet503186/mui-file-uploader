@@ -1,70 +1,60 @@
-import * as React from "react";
-import Tabs, { TabsProps } from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Box from "@mui/material/Box";
+import { Button, Box } from "@mui/material";
 import { IFileUploader } from "../types";
-import { useTheme } from "@mui/material";
 
-interface ScrollableTabsProps {
+interface IProps {
   groups: IFileUploader.ITabGroup[];
   onTabChange: (newTab: number) => void;
   activeTab: number;
   renderContent: React.ReactNode;
-  tabsProps?: TabsProps;
   getLocalizedText?: (text: string, params?: Record<string, any>) => string;
 }
 
-function ScrollableTabs({
+export default function ScrollableTabs({
   groups,
   onTabChange,
   activeTab,
   renderContent,
-  tabsProps,
   getLocalizedText,
-}: ScrollableTabsProps) {
-  const theme = useTheme();
-  const handleChange = (_: React.SyntheticEvent, newValue: number) => {
-    onTabChange(newValue);
-  };
-
+}: IProps) {
   return (
-    <Box sx={{ maxWidth: "100%", borderRadius: 1 }}>
-      <Tabs
-        value={activeTab}
-        onChange={handleChange}
-        variant="scrollable"
-        scrollButtons
-        allowScrollButtonsMobile
-        aria-label="custom scrollable tabs"
-        sx={{ justifyContent: "center" }}
-        slotProps={{
-          indicator: {
-            sx: { bgcolor: theme.palette.primary.main },
-          },
-        }}
-        {...tabsProps}
-      >
-        {groups.map(({ label, _key }, index) => {
-          return (
-            <Tab
-              key={_key}
-              label={getLocalizedText?.(`${_key}`) || label}
-              tabIndex={index}
-              sx={{
-                fontWeight: "bold",
-
-                "&.Mui-selected": {
-                  color: theme.palette.primary.main, // Selected tab text color
-                },
-              }}
-            />
-          );
-        })}
-      </Tabs>
+    <Box sx={{ width: "100%" }}>
+      <Box sx={{ display: "flex", overflowX: "auto" }}>
+        {groups.map(({ label, _key }, index) => (
+          <Button
+            key={_key}
+            onClick={() => onTabChange(index)}
+            sx={{
+              flex: "0 0 auto",
+              borderRadius: 0,
+              borderBottom: 2,
+              borderColor: activeTab === index ? "primary.main" : "transparent",
+              color: activeTab === index ? "primary.main" : "text.primary",
+              fontWeight: 600,
+              textTransform: "uppercase",
+              "&:hover": {
+                backgroundColor: "transparent",
+              },
+              fontSize: "0.875rem",
+              lineHeight: 1.25,
+              letterSpacing: "0.02857em",
+              maxWidth: "360px",
+              minWidth: "90px",
+              position: "relative",
+              minHeight: "48px",
+              flexShrink: 0,
+              padding: "12px 16px",
+              overflow: "hidden",
+              whiteSpace: "normal",
+              textAlign: "center",
+              flexDirection: "column",
+            }}
+          >
+            {getLocalizedText?.(`${_key}`) || label}
+          </Button>
+        ))}
+      </Box>
 
       <Box sx={{ my: 2 }}>{renderContent}</Box>
     </Box>
   );
 }
-
-export default ScrollableTabs;

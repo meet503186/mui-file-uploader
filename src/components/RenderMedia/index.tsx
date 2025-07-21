@@ -5,13 +5,12 @@ import { DocumentPlaceholder } from "./Document";
 import { PdfPlaceholder } from "./Pdf";
 
 import { Box, IconButton, LinearProgress, Typography } from "@mui/material";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import DeleteIcon from "@mui/icons-material/Delete";
 
 import { useCallback, useState } from "react";
 import PreviewModal from "./PreviewModal";
 import { IMedia } from "../../types";
 import { getFileType } from "../../utils";
+import { DeleteIcon, VisibilityIcon } from "../../assets/icons/IconRegistery";
 
 interface IRenderMedia {
   media: IMedia.FileData[];

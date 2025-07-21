@@ -208,9 +208,6 @@ const UploaderModal = ({
           groups={VISIBLE_UPLOAD_OPTIONS}
           activeTab={activeTab}
           onTabChange={onTabChange}
-          tabsProps={{
-            scrollButtons: false,
-          }}
           getLocalizedText={getLocalizedText}
           renderContent={
             <RenderUploadOption

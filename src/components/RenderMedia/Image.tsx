@@ -1,6 +1,6 @@
-import BrokenImageIcon from "@mui/icons-material/BrokenImage";
 import { Box, CircularProgress } from "@mui/material";
 import { ImgHTMLAttributes, useState } from "react";
+import { BrokenImageIcon } from "../../assets/icons/IconRegistery";
 
 const Image = ({
   src,

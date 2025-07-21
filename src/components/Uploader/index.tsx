@@ -1,8 +1,8 @@
 import { TextField, Typography } from "@mui/material";
-import ImageIcon from "@mui/icons-material/Image";
 import { IFileUploader } from "../../types";
 import UploaderModal from "./UploaderModal";
 import { useState } from "react";
+import { ImageIcon } from "../../assets/icons/IconRegistery";
 
 const FileUploader = ({
   error,

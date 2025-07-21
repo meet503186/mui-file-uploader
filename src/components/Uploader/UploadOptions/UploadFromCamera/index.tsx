@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Typography } from "@mui/material";
 import {
   flipPicture,
   getMedia,
@@ -8,7 +7,9 @@ import {
 } from "./utils";
 import { CameraFooter } from "./CameraFooter";
 import { IFileUploader } from "../../../../types";
-import CAPTURE_SOUND from "../../../../assets/camera-click.wav";
+
+// REMOVED: Due to heavy bundle size
+// import CAPTURE_SOUND from "../../../../assets/camera-click.wav";
 
 const UploadFromCamera = ({
   onChange,
@@ -133,11 +134,10 @@ const UploadFromCamera = ({
   }, []);
 
   return (
-    <Typography component={"div"} sx={{ textAlign: "center" }}>
-      <Typography
-        component={"div"}
-        sx={{
-          mx: "auto",
+    <div style={{ textAlign: "center" }}>
+      <div
+        style={{
+          margin: "auto",
           position: "relative",
           background: "rgba(0, 0, 0, 0.1)",
         }}
@@ -168,8 +168,8 @@ const UploadFromCamera = ({
 
         {/* showing loading until camera not loaded */}
         {isCameraLoading && (
-          <Typography
-            sx={{
+          <div
+            style={{
               position: "absolute",
               top: "50%",
               left: "50%",
@@ -177,14 +177,14 @@ const UploadFromCamera = ({
             }}
           >
             {getLocalizedText?.("loading") || "Loading..."}
-          </Typography>
+          </div>
         )}
 
         {/* hidden audio tag for playing capture sound */}
         <audio
           ref={audioRef}
           style={{ display: "none" }}
-          src={CAPTURE_SOUND}
+          // src={CAPTURE_SOUND}
         ></audio>
 
         {/* Rendering camera options */}
@@ -198,8 +198,8 @@ const UploadFromCamera = ({
           onDecline={handleDeclinePicture}
           onMirror={handleFlipPicture}
         />
-      </Typography>
-    </Typography>
+      </div>
+    </div>
   );
 };
 

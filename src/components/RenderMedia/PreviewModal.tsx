@@ -1,14 +1,17 @@
 import Video from "./Video";
 import Image from "./Image";
 import { Box, BoxProps, Modal, SxProps } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import { ArrowBack, ArrowForward } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import Audio from "./Audio";
 import Pdf from "./Pdf";
 import Document from "./Document";
 import { IMedia } from "../../types";
 import { getFileType } from "../../utils";
+import {
+  CloseIcon,
+  ArrowBackIcon,
+  ArrowForwardIcon,
+} from "../../assets/icons/IconRegistery";
 
 const PreviewModal = ({
   isOpen,
@@ -59,11 +62,11 @@ const PreviewModal = ({
         </IconWrapper>
 
         <IconWrapper sx={{ left: 6, top: "50%" }} onClick={handlePrev}>
-          <ArrowBack />
+          <ArrowBackIcon />
         </IconWrapper>
 
         <IconWrapper sx={{ right: 6, top: "50%" }} onClick={handleNext}>
-          <ArrowForward />
+          <ArrowForwardIcon />
         </IconWrapper>
 
         <Box

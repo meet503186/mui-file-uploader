@@ -1,8 +1,11 @@
 import { Box, IconButton, Typography } from "@mui/material";
-import DoneIcon from "@mui/icons-material/Done";
-import CloseIcon from "@mui/icons-material/Close";
-import FlipIcon from "@mui/icons-material/Flip";
+
 import RenderCameraList from "./RenderCameraList";
+import {
+  CloseIcon,
+  DoneIcon,
+  FlipIcon,
+} from "../../../../assets/icons/IconRegistery";
 
 interface ICameraFooterProps {
   devices: MediaDeviceInfo[];

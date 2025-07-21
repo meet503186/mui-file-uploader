@@ -6,8 +6,10 @@ import React, {
   VideoHTMLAttributes,
 } from "react";
 import { Box, CircularProgress, useTheme } from "@mui/material";
-import VideocamOffIcon from "@mui/icons-material/VideocamOff";
-import { PlayCircle } from "@mui/icons-material";
+import {
+  PlayCircleIcon,
+  VideocamOffIcon,
+} from "../../assets/icons/IconRegistery";
 
 const Video: React.FC<
   VideoHTMLAttributes<HTMLVideoElement> & {
@@ -60,7 +62,7 @@ const Video: React.FC<
       {loading && !error && <CircularProgress size={32} />}
 
       {!loading && !error && !!isPlaceholder && (
-        <PlayCircle
+        <PlayCircleIcon
           sx={{
             fontSize: "auto",
             zIndex: 10,

@@ -1,5 +1,5 @@
 import { IconButton, Typography } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { CloseIcon } from "../../assets/icons/IconRegistery";
 
 interface IHeaderProps {
   title: string;

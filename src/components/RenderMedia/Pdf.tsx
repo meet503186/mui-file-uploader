@@ -1,8 +1,8 @@
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import { Box, SxProps } from "@mui/system";
 import { IMedia } from "../../types";
 import { CircularProgress, useTheme } from "@mui/material";
 import { useCallback, useState } from "react";
+import { PictureAsPdfIcon } from "../../assets/icons/IconRegistery";
 
 const Pdf = ({ data }: { data: IMedia.FileData }) => {
   const [isLoading, setIsLoading] = useState(true);

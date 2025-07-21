@@ -6,8 +6,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import VolumeOffIcon from "@mui/icons-material/VolumeOff";
-import HeadsetIcon from "@mui/icons-material/Headset";
+import { HeadsetIcon, VolumeOffIcon } from "../../assets/icons/IconRegistery";
 
 const Audio: React.FC<React.AudioHTMLAttributes<HTMLAudioElement>> = ({
   src,

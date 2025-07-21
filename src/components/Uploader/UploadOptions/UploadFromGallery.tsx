@@ -1,8 +1,9 @@
 import { Typography } from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+
 import { IFileUploader } from "../../../types";
 import { filterFilesByMaxSize } from "../../../utils";
 import { useMemo } from "react";
+import { CloudUploadIcon } from "../../../assets/icons/IconRegistery";
 
 const UploadFromGallery = ({
   name,
