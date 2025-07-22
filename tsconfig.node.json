@@ -22,7 +22,8 @@
     "noUncheckedSideEffectImports": true,
 
     "declaration": true,
-    "emitDeclarationOnly": false
+    "emitDeclarationOnly": false,
+    "declarationDir": "./dist/types"
   },
-  "include": ["src","vite.config.ts"]
+  "include": ["src"]
 }
