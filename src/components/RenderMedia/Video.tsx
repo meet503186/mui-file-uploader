@@ -5,7 +5,7 @@ import React, {
   useState,
   VideoHTMLAttributes,
 } from "react";
-import { Box, CircularProgress, useTheme } from "@mui/material";
+import { Box, CircularProgress, SvgIconProps, useTheme } from "@mui/material";
 import {
   PlayCircleIcon,
   VideocamOffIcon,
@@ -14,6 +14,7 @@ import {
 const Video: React.FC<
   VideoHTMLAttributes<HTMLVideoElement> & {
     isPlaceholder?: boolean;
+    iconProps?: SvgIconProps;
   }
 > = ({
   src,
@@ -22,6 +23,7 @@ const Video: React.FC<
   height = "100%",
   style = {},
   isPlaceholder,
+  iconProps = {},
   ...rest
 }) => {
   const theme = useTheme();
@@ -69,6 +71,7 @@ const Video: React.FC<
             position: "absolute",
             color: theme.palette.primary.main,
           }}
+          {...iconProps}
         />
       )}
 
