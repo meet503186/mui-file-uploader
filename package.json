@@ -1,6 +1,6 @@
 {
   "name": "mui-file-uploader",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "type": "module",
   "main": "dist/mui-file-uploader.cjs",
   "module": "dist/mui-file-uploader.js",
