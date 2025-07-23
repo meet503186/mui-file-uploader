@@ -4,7 +4,6 @@ import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import commonjs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import dts from "rollup-plugin-dts";
-import terser from "@rollup/plugin-terser";
 
 const extensions = [".ts", ".tsx"];
 
@@ -13,15 +12,14 @@ export default [
     input: "src/index.ts",
     output: [
       {
-        file: "dist/mui-file-uploader.cjs",
-        format: "cjs",
+        file: "dist/mui-file-uploader.js",
+        format: "esm",
         sourcemap: true,
       },
       {
-        file: "dist/mui-file-uploader.min.js",
-        format: "esm",
+        file: "dist/mui-file-uploader.cjs",
+        format: "cjs",
         sourcemap: true,
-        plugins: [terser()],
       },
     ],
     plugins: [
