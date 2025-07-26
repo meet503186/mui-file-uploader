@@ -8,7 +8,6 @@ const FileUploader = ({
   error,
   files = [],
   size,
-  count = false,
   getLocalizedText,
   ...rest
 }: IFileUploader.Props) => {
@@ -24,8 +23,8 @@ const FileUploader = ({
       {/* visible component */}
 
       <TextField
-        label={`${getLocalizedText?.(label)} ${
-          count ? `(${files.length})` : ""
+        label={`${getLocalizedText ? getLocalizedText(label) : label} ${
+          rest.extraProps?.count ? `(${files.length})` : ""
         }`}
         size="small"
         variant="outlined"

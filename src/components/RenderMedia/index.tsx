@@ -111,7 +111,12 @@ const RenderMedia = ({
                     onClick={() => onRemove(index)}
                     disabled={media.length === 1 && required}
                   >
-                    <DeleteIcon fontSize="small" color="error" />
+                    <DeleteIcon
+                      fontSize="small"
+                      color={
+                        media.length === 1 && required ? "disabled" : "error"
+                      }
+                    />
                   </IconButton>
                 )}
               </Typography>

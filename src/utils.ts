@@ -39,7 +39,7 @@ export const filterFilesByMaxSize = ({
 // };
 
 export function getFileType(file: IMedia.FileData): string {
-  const ext = file.name.split(".").pop()?.toLowerCase();
+  const ext = file.name?.split(".").pop()?.toLowerCase();
 
   if (!ext) return "unknown";
 

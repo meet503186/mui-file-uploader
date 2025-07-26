@@ -33,12 +33,11 @@ const UploaderModal = ({
   files: _files,
   onChange,
   multiple,
-  onUploadFile,
-  onDeleteFile,
   getLocalizedText,
-  onSubmit,
   ...rest
 }: IUploaderModalProps) => {
+  const { onUploadFile, onDeleteFile, onSubmit } = extraProps || {};
+
   const [activeTab, setActiveTab] = useState(0);
   const [progressMap, setProgressMap] = useState<number[]>([
     ...Array(_files.length).fill(100),
