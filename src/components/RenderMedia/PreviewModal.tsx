@@ -1,10 +1,5 @@
-import Video from "./Video";
-import Image from "./Image";
+import { useCallback, useEffect, useState } from "react";
 import { Box, BoxProps, Modal, SxProps } from "@mui/material";
-import { useEffect, useState } from "react";
-import Audio from "./Audio";
-import Pdf from "./Pdf";
-import Document from "./Document";
 import { IMedia } from "../../types";
 import { getFileType } from "../../utils";
 import {
@@ -12,6 +7,11 @@ import {
   ArrowBackIcon,
   ArrowForwardIcon,
 } from "../../assets/icons/IconRegistery";
+import Video from "./Video";
+import Image from "./Image";
+import Audio from "./Audio";
+import Pdf from "./Pdf";
+import Document from "./Document";
 
 const PreviewModal = ({
   isOpen,
@@ -27,17 +27,43 @@ const PreviewModal = ({
 }) => {
   const [visibleItem, setVisibleItem] = useState<number>(currentIndex);
 
-  const handlePrev = () => {
-    if (visibleItem > 0) {
-      setVisibleItem((_state) => --_state);
-    }
-  };
+  const handlePrev = useCallback(() => {
+    setVisibleItem((prev) => (prev > 0 ? prev - 1 : prev));
+  }, []);
 
-  const handleNext = () => {
-    if (visibleItem < data.length - 1) {
-      setVisibleItem((_state) => ++_state);
-    }
-  };
+  const handleNext = useCallback(() => {
+    setVisibleItem((prev) => (prev < data.length - 1 ? prev + 1 : prev));
+  }, [data]);
+
+  const handleKeyPress = useCallback(
+    (e: KeyboardEvent) => {
+      switch (e.key) {
+        case "ArrowLeft":
+          handlePrev();
+          break;
+
+        case "ArrowRight":
+          handleNext();
+          break;
+
+        case "Escape":
+          onClose();
+          break;
+
+        default:
+          break;
+      }
+    },
+    [handlePrev, handleNext, onClose]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, [handleKeyPress]);
 
   useEffect(() => {
     setVisibleItem(currentIndex);
@@ -55,8 +81,9 @@ const PreviewModal = ({
         overflow: "auto",
         backgroundColor: "rgba(0, 0, 0, 0.7)",
       }}
+      disableEscapeKeyDown
     >
-      <>
+      <Box>
         <IconWrapper onClick={onClose}>
           <CloseIcon />
         </IconWrapper>
@@ -101,7 +128,7 @@ const PreviewModal = ({
         >
           <PreviewMedia data={data[visibleItem]} />
         </Box>
-      </>
+      </Box>
     </Modal>
   );
 };
