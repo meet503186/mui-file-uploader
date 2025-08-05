@@ -57,13 +57,13 @@ const Video: React.FC<
       overflow="hidden"
       style={{
         aspectRatio: 1,
-        background: isPlaceholder ? "inherit" : "black",
+        background: isPlaceholder ? "transparent" : "black",
         ...style,
       }}
     >
-      {loading && !error && <CircularProgress size={32} />}
+      {loading && !error && !isPlaceholder && <CircularProgress size={32} />}
 
-      {!loading && !error && !!isPlaceholder && (
+      {!!isPlaceholder && (
         <PlayCircleIcon
           sx={{
             fontSize: "auto",
@@ -75,33 +75,34 @@ const Video: React.FC<
         />
       )}
 
-      {!error ? (
-        <video
-          ref={videoRef}
-          src={src}
-          poster={poster}
-          preload="metadata"
-          loop={false}
-          onLoadedMetadata={handleLoadedData}
-          onError={handleError}
-          style={{
-            display: loading ? "none" : "block",
-            width: "100%",
-            // height: "100%",
-            aspectRatio: 1,
-            objectFit: isPlaceholder ? "cover" : "contain",
-            opacity: isPlaceholder ? 0.7 : 1,
-          }}
-          {...rest}
-        />
-      ) : (
-        <Box display="flex" flexDirection="column" alignItems="center">
-          <VideocamOffIcon color="disabled" fontSize="large" />
-          <span style={{ fontSize: 12, color: "#888" }}>
-            Video not available
-          </span>
-        </Box>
-      )}
+      {!isPlaceholder &&
+        (!error ? (
+          <video
+            ref={videoRef}
+            src={src}
+            poster={poster}
+            preload="metadata"
+            loop={false}
+            onLoadedMetadata={handleLoadedData}
+            onError={handleError}
+            style={{
+              display: loading ? "none" : "block",
+              width: "100%",
+              // height: "100%",
+              aspectRatio: 1,
+              objectFit: isPlaceholder ? "cover" : "contain",
+              opacity: isPlaceholder ? 0 : 1,
+            }}
+            {...rest}
+          />
+        ) : (
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <VideocamOffIcon color="disabled" fontSize="large" />
+            <span style={{ fontSize: 12, color: "#888" }}>
+              Video not available
+            </span>
+          </Box>
+        ))}
     </Box>
   );
 };
