@@ -166,7 +166,13 @@ const UploaderModal = ({
 
   return (
     <CustomModal
-      title={getLocalizedText?.("uploadFile") || "Upload File(s)"}
+      title={
+        getLocalizedText
+          ? `${getLocalizedText?.("uploadFile", {
+              label: getLocalizedText(rest.label),
+            })}`
+          : `Upload ${rest.label}`
+      }
       isOpen={isOpen}
       sx={{
         width: {
