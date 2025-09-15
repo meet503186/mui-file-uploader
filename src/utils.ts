@@ -129,3 +129,7 @@ export function checkIsMobile() {
 
   return false;
 }
+
+export function isFile(file: unknown) {
+  return !!(file instanceof File);
+}

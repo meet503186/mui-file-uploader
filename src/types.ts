@@ -74,5 +74,7 @@ export namespace IMedia {
     size: number;
     path: string;
     file?: File;
+    isFailed?: boolean;
+    isPending?: boolean;
   }
 }

@@ -11,21 +11,24 @@ import PreviewModal from "./PreviewModal";
 import { IMedia } from "../../types";
 import { getFileType } from "../../utils";
 import { DeleteIcon, VisibilityIcon } from "../../assets/icons/IconRegistery";
+import ReplayIcon from "@mui/icons-material/Replay";
 
 interface IRenderMedia {
   media: IMedia.FileData[];
-  onRemove: (index: number) => void;
-  progressMap: number[];
+  progressMap: (number | undefined)[];
   required: boolean;
   disabled?: boolean;
+  onRemove: (index: number) => void;
+  onRetry: (index: number) => void;
 }
 
 const RenderMedia = ({
   media,
-  onRemove,
   progressMap,
   required,
   disabled,
+  onRemove,
+  onRetry,
 }: IRenderMedia) => {
   const [previewData, setPreviewData] = useState<{
     selectedIndex: number;
@@ -99,28 +102,36 @@ const RenderMedia = ({
                 value={progressMap[index]}
               />
             )}
-            {progressMap[index] === 100 && (
-              <Typography
-                sx={{ flex: 1, display: "flex", justifyContent: "flex-end" }}
-              >
-                <IconButton onClick={() => onView(index)}>
-                  <VisibilityIcon fontSize="small" />
+            {progressMap[index] === 100 &&
+              (file.isFailed ? (
+                <IconButton onClick={() => onRetry(index)}>
+                  <ReplayIcon
+                    fontSize="small"
+                    sx={{ transform: "scaleX(-1)" }}
+                  />
                 </IconButton>
-                {!disabled && (
-                  <IconButton
-                    onClick={() => onRemove(index)}
-                    disabled={media.length === 1 && required}
-                  >
-                    <DeleteIcon
-                      fontSize="small"
-                      color={
-                        media.length === 1 && required ? "disabled" : "error"
-                      }
-                    />
+              ) : (
+                <Typography
+                  sx={{ flex: 1, display: "flex", justifyContent: "flex-end" }}
+                >
+                  <IconButton onClick={() => onView(index)}>
+                    <VisibilityIcon fontSize="small" />
                   </IconButton>
-                )}
-              </Typography>
-            )}
+                  {!disabled && (
+                    <IconButton
+                      onClick={() => onRemove(index)}
+                      disabled={media.length === 1 && required}
+                    >
+                      <DeleteIcon
+                        fontSize="small"
+                        color={
+                          media.length === 1 && required ? "disabled" : "error"
+                        }
+                      />
+                    </IconButton>
+                  )}
+                </Typography>
+              ))}
           </Typography>
         );
       })}

@@ -1,10 +1,12 @@
+import { useMemo, useState, useCallback } from "react";
 import CustomModal from "../CustomModal";
-import { IFileUploader, IMedia } from "../../types";
-import { useMemo, useState } from "react";
 import RenderUploadOption from "./RenderUploadOption";
-import { checkIsMobile, getFileMetaData } from "../../utils";
 import ScrollableTabs from "../ScrollableTabs";
 import RenderMedia from "../RenderMedia";
+import ConfirmationModal from "../ConfirmationModal";
+
+import { IFileUploader, IMedia } from "../../types";
+import { checkIsMobile, getFileMetaData, isFile } from "../../utils";
 
 interface IUploaderModalProps extends IFileUploader.Props {
   isOpen: boolean;
@@ -15,14 +17,8 @@ const UPLOAD_OPTIONS: {
   label: string;
   _key: IFileUploader.uploadOptionType;
 }[] = [
-  {
-    _key: "gallery",
-    label: "Gallery",
-  },
-  {
-    _key: "camera",
-    label: "Camera",
-  },
+  { _key: "gallery", label: "Gallery" },
+  { _key: "camera", label: "Camera" },
 ];
 
 const UploaderModal = ({
@@ -30,159 +26,214 @@ const UploaderModal = ({
   onClose,
   extraProps,
   disabled,
-  files: _files,
+  files: initialFiles,
   onChange,
   multiple,
   getLocalizedText,
   ...rest
 }: IUploaderModalProps) => {
-  const { onUploadFile, onDeleteFile, onSubmit } = extraProps || {};
+  const {
+    onUploadFile,
+    onDeleteFile,
+    onSubmit,
+    uploadOptions = [],
+  } = extraProps || {};
 
+  /** State */
   const [activeTab, setActiveTab] = useState(0);
-  const [progressMap, setProgressMap] = useState<number[]>([
-    ...Array(_files.length).fill(100),
-  ]);
   const [isUploading, setIsUploading] = useState(false);
+  const [confirmationModalData, setConfirmationModalData] = useState<{
+    id: number;
+  } | null>(null);
+
   const [files, setFiles] = useState<IMedia.FileData[]>(
-    parseInputFiles(Array.isArray(_files) ? _files : [_files]) || []
+    parseInputFiles(Array.isArray(initialFiles) ? initialFiles : [initialFiles])
   );
 
-  const { uploadOptions = [] } = extraProps || {};
+  const [progressMap, setProgressMap] = useState<(number | undefined)[]>(
+    Array(files.length).fill(100)
+  );
 
-  const onTabChange = (newTab: number) => {
-    !isUploading && setActiveTab(newTab);
-  };
-
-  const handleUploadProgress = (progress: number, index: number, _: number) => {
-    setProgressMap((_state) => {
-      _state[index] = progress;
-      return [..._state];
-    });
-  };
-
-  const handleChange = async (files: (IMedia.FileData | File)[]) => {
-    const filesToUpload = files.filter(
-      (file): file is File => file instanceof File
-    );
-
-    if (!filesToUpload.length) return;
-
-    setProgressMap([
-      ...(multiple ? Array(_files.length).fill(100) : []),
-      ...(onUploadFile
-        ? Array(filesToUpload.length)
-        : Array(filesToUpload.length).fill(100)),
-    ]);
-
-    setFiles(
-      multiple
-        ? [..._files, ...filesToUpload.map((file) => getFileMetaData(file))]
-        : [getFileMetaData(filesToUpload[0])]
-    );
-
-    onUploadFile && setIsUploading(true);
-
-    const uploadPromises = filesToUpload.map(async (file, index) => {
-      if (onUploadFile) {
-        try {
-          const filePath = await onUploadFile(file, (progress) =>
-            handleUploadProgress(
-              progress,
-              multiple ? _files.length + index : index,
-              filesToUpload.length
-            )
-          );
-
-          return getFileMetaData(file, filePath);
-        } catch (error) {
-          rest.onError?.(
-            error instanceof Error
-              ? error.message
-              : getLocalizedText?.("uploadFailed") || "Upload failed"
-          );
-          setFiles(_files);
-          return null;
-        }
-      } else {
-        return getFileMetaData(file);
-      }
-    });
-
-    const results = await Promise.all(uploadPromises);
-    const successfulUploads = results.filter(Boolean) as IMedia.FileData[];
-
-    setIsUploading(false);
-
-    if (multiple) {
-      onChange([..._files, ...successfulUploads]);
-    } else {
-      onChange(successfulUploads);
-    }
-  };
-
-  const handleRemove = async (index: number) => {
-    if (onDeleteFile && _files[index].id) {
-      await onDeleteFile(_files[index].id);
-    }
-
-    const filteredFiles = _files.filter((_, indx) => indx !== index);
-    onChange(filteredFiles);
-    setFiles(filteredFiles);
-  };
-
-  const handleCancel = () => {
-    if (onUploadFile) {
-      const filteredFiles = _files.filter((file) => file.id);
-      onChange(filteredFiles);
-      setFiles(filteredFiles);
-    }
-
-    onClose();
-  };
-
-  const handleSubmit = async () => {
-    if (onSubmit) {
-      await onSubmit();
-    }
-
-    onClose();
-  };
-
+  /** Derived values */
   const isMobile = checkIsMobile();
 
   const VISIBLE_UPLOAD_OPTIONS = useMemo(() => {
-    if (isMobile) {
-      return [UPLOAD_OPTIONS[0]];
-    }
+    if (isMobile) return [UPLOAD_OPTIONS[0]];
 
     return uploadOptions.length
-      ? UPLOAD_OPTIONS.filter(({ _key }) => !!uploadOptions.includes(_key))
+      ? UPLOAD_OPTIONS.filter(({ _key }) => uploadOptions.includes(_key))
       : UPLOAD_OPTIONS;
   }, [uploadOptions, isMobile]);
 
-  const isUploadDisabled = useMemo(() => {
-    return !files.some((file) => !file.id) || isUploading;
-  }, [files, isUploading]);
+  const isUploadDisabled = useMemo(
+    () => !files.some((file) => !file.id && !file.isFailed) || isUploading,
+    [files, isUploading]
+  );
 
+  /** Handlers */
+  const closeModal = useCallback(() => setConfirmationModalData(null), []);
+
+  const handleTabChange = useCallback(
+    (newTab: number) => {
+      if (!isUploading) setActiveTab(newTab);
+    },
+    [isUploading]
+  );
+
+  const handleUploadProgress = useCallback(
+    (progress: number, index: number) => {
+      setProgressMap((prev) => {
+        const updated = [...prev];
+        updated[index] = progress;
+        return updated;
+      });
+    },
+    []
+  );
+
+  const isUploadable = useCallback(
+    (file: IMedia.FileData | File, index: number, retryIndices?: number[]) => {
+      if (isFile(file) || file.isPending) return true;
+      return retryIndices
+        ? !!file.isFailed && !!file.file && retryIndices.includes(index)
+        : false;
+    },
+    []
+  );
+
+  const handleChange = useCallback(
+    async (inputFiles: (IMedia.FileData | File)[], retryIndices?: number[]) => {
+      if (!retryIndices) {
+        inputFiles = [...files, ...inputFiles];
+      }
+      const updatedFiles = multiple
+        ? inputFiles.map((file, index) =>
+            isUploadable(file, index, retryIndices)
+              ? isFile(file)
+                ? { ...getFileMetaData(file), isPending: true }
+                : { ...file, ...getFileMetaData(file.file!), isPending: true }
+              : (file as IMedia.FileData)
+          )
+        : [
+            (() => {
+              const fileToUpload = inputFiles.find((file, index) =>
+                isUploadable(file, index, retryIndices)
+              )!;
+              return isFile(fileToUpload)
+                ? { ...getFileMetaData(fileToUpload), isPending: true }
+                : {
+                    ...fileToUpload,
+                    ...getFileMetaData(fileToUpload.file!),
+                    isPending: true,
+                  };
+            })(),
+          ];
+
+      setProgressMap(
+        updatedFiles.map((file, index) =>
+          isUploadable(file, index, retryIndices) ? 0 : 100
+        )
+      );
+      setFiles(updatedFiles);
+
+      if (!onUploadFile) {
+        onChange(updatedFiles);
+        return;
+      }
+
+      setIsUploading(true);
+
+      try {
+        const results = await Promise.all(
+          updatedFiles.map(async (file, index) => {
+            if (!isUploadable(file, index, retryIndices)) return file;
+
+            const fileToUpload = isFile(file) ? file : file.file!;
+
+            try {
+              const filePath = await onUploadFile(fileToUpload, (progress) =>
+                handleUploadProgress(progress, index)
+              );
+              return getFileMetaData(fileToUpload, filePath);
+            } catch (error) {
+              rest.onError?.(
+                error instanceof Error
+                  ? error.message
+                  : getLocalizedText?.("uploadFailed") || "Upload failed"
+              );
+              handleUploadProgress(100, index);
+              return { ...getFileMetaData(fileToUpload), isFailed: true };
+            }
+          })
+        );
+
+        setFiles(results);
+        onChange(results);
+      } finally {
+        setIsUploading(false);
+      }
+    },
+    [
+      multiple,
+      onChange,
+      onUploadFile,
+      handleUploadProgress,
+      isUploadable,
+      getLocalizedText,
+      rest,
+    ]
+  );
+
+  const handleRetry = useCallback(
+    (index: number) => {
+      handleChange(files, [index]);
+    },
+    [files, handleChange]
+  );
+
+  const handleRemove = useCallback(
+    async (index: number) => {
+      const fileToRemove = files[index];
+      if (onDeleteFile && fileToRemove.id) {
+        setConfirmationModalData({ id: fileToRemove.id });
+        return;
+      }
+
+      const updatedFiles = files.filter((_, i) => i !== index);
+      setFiles(updatedFiles);
+      onChange(updatedFiles);
+    },
+    [files, onDeleteFile, onChange]
+  );
+
+  const handleCancel = useCallback(() => {
+    if (onUploadFile) {
+      const persistedFiles = files.filter((file) => file.id);
+      setFiles(persistedFiles);
+      onChange(persistedFiles);
+    }
+    onClose();
+  }, [onUploadFile, files, onChange, onClose]);
+
+  const handleSubmit = useCallback(async () => {
+    if (onSubmit) await onSubmit();
+    onClose();
+  }, [onSubmit, onClose]);
+
+  /** Render */
   return (
     <CustomModal
       title={
         getLocalizedText
-          ? `${getLocalizedText?.("uploadFile", {
+          ? getLocalizedText("uploadFile", {
               label: getLocalizedText(rest.label),
-            })}`
+            })
           : `Upload ${rest.label}`
       }
       isOpen={isOpen}
       sx={{
-        width: {
-          xs: "90%",
-          sm: 600,
-        },
-        minWidth: {
-          xs: 200,
-          sm: 600,
-        },
+        width: { xs: "90%", sm: 600 },
+        minWidth: { xs: 200, sm: 600 },
         height: 600,
         display: "flex",
         flexDirection: "column",
@@ -207,12 +258,12 @@ const UploaderModal = ({
         },
       ]}
     >
-      {/* Upload options (tabs) */}
+      {/* Upload options */}
       {!disabled && (
         <ScrollableTabs
           groups={VISIBLE_UPLOAD_OPTIONS}
           activeTab={activeTab}
-          onTabChange={onTabChange}
+          onTabChange={handleTabChange}
           getLocalizedText={getLocalizedText}
           renderContent={
             <RenderUploadOption
@@ -228,20 +279,49 @@ const UploaderModal = ({
         />
       )}
 
-      {/* render files */}
+      {/* Uploaded files */}
       <RenderMedia
         media={files}
-        onRemove={handleRemove}
         progressMap={progressMap}
         required={!rest.isOptional}
         disabled={disabled}
+        onRemove={handleRemove}
+        onRetry={handleRetry}
       />
+
+      {/* Delete confirmation */}
+      {confirmationModalData && (
+        <ConfirmationModal
+          isOpen
+          onClose={closeModal}
+          description={
+            getLocalizedText?.("deleteConfirmation", { item: "file" }) ||
+            "Are you sure you want to delete this file?"
+          }
+          onYes={async () => {
+            if (!onDeleteFile || !confirmationModalData.id) return;
+
+            await onDeleteFile(confirmationModalData.id);
+
+            const updatedFiles = files.filter(
+              (file) => file.id !== confirmationModalData.id
+            );
+            setFiles(updatedFiles);
+            onChange(updatedFiles);
+            closeModal();
+          }}
+          title={
+            getLocalizedText?.("deleteItem", { item: "file" }) || "Delete File"
+          }
+        />
+      )}
     </CustomModal>
   );
 };
 
 export default UploaderModal;
 
+/** Utility to standardize incoming files */
 function parseInputFiles(
   files: (string | File | IMedia.FileData)[]
 ): IMedia.FileData[] {
@@ -257,10 +337,6 @@ function parseInputFiles(
       };
     }
 
-    if (file instanceof File) {
-      return getFileMetaData(file);
-    }
-
-    return file;
+    return isFile(file) ? getFileMetaData(file) : file;
   });
 }
