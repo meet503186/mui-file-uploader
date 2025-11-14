@@ -57,7 +57,7 @@ const UploadFromCamera = ({
     const audio = audioRef.current;
 
     if (canvas && video && audio) {
-      await audio.play();
+      // await audio.play();
 
       setTimeout(async () => {
         const { width, height } = video.getBoundingClientRect();
