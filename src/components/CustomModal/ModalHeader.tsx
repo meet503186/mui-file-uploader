@@ -3,10 +3,11 @@ import { CloseIcon } from "../../assets/icons/IconRegistery";
 
 interface IHeaderProps {
   title: string;
+  closeBtn?: boolean;
   onClose?: () => void;
 }
 
-export const ModalHeader = ({ title, onClose }: IHeaderProps) => {
+export const ModalHeader = ({ title, closeBtn, onClose }: IHeaderProps) => {
   return (
     <Typography
       id="modal-modal-title"
@@ -22,7 +23,7 @@ export const ModalHeader = ({ title, onClose }: IHeaderProps) => {
       <Typography variant="h6" component="h2">
         {title}
       </Typography>
-      {onClose && (
+      {onClose && closeBtn && (
         <IconButton onClick={onClose}>
           <CloseIcon fontSize="small" />
         </IconButton>

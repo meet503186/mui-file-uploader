@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material";
 
 import { IFileUploader } from "../../../types";
-import { filterFilesByMaxSize } from "../../../utils";
+import { filterFilesByMaxSize, handleA11yKeyDown } from "../../../utils";
 import { useMemo } from "react";
 import { CloudUploadIcon } from "../../../assets/icons/IconRegistery";
 
@@ -49,7 +49,7 @@ const UploadFromGallery = ({
     return `${
       getLocalizedText?.("supportedFiles") || "Supported files"
     }: ${friendlyNames.join(", ")}`;
-  }, [supportedFiles]);
+  }, [supportedFiles, getLocalizedText]);
 
   const handleChange = (files: FileList) => {
     const filteredFiles = filterFilesByMaxSize({
@@ -66,14 +66,18 @@ const UploadFromGallery = ({
     onChange(filteredFiles);
   };
 
+  const fileInputId = `input-file-${name}`;
+
   return (
     <Typography component={"div"}>
       <Typography
+        tabIndex={0}
         component={"label"}
-        htmlFor={`input-file-${name}`}
+        htmlFor={fileInputId}
         color={"primary"}
         sx={{
           border: "1px dashed",
+          outlineColor: "primary.main",
           height: 200,
           width: "100%",
           borderRadius: 2,
@@ -88,6 +92,9 @@ const UploadFromGallery = ({
 
           handleChange(e.dataTransfer.files);
         }}
+        onKeyDown={handleA11yKeyDown(() => {
+          document.getElementById(fileInputId)?.click();
+        })}
       >
         <Typography
           sx={{

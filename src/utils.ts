@@ -7,8 +7,8 @@ export const filterFilesByMaxSize = ({
   files: FileList;
   maxSize: number;
 }) => {
-  let filteredFiles: any = [];
-  for (let file of files) {
+  const filteredFiles: any = [];
+  for (const file of files) {
     if (Number((file.size / (1024 * 1024)).toFixed(2)) <= maxSize) {
       filteredFiles.push(file);
     }
@@ -133,3 +133,14 @@ export function checkIsMobile() {
 export function isFile(file: unknown) {
   return !!(file instanceof File);
 }
+
+export const handleA11yKeyDown =
+  (callback: () => void) => (event: React.KeyboardEvent) => {
+    if (!callback) return;
+
+    if (event.code === "Space" || event.code === "Enter") {
+      event.preventDefault();
+      event.stopPropagation();
+      callback();
+    }
+  };

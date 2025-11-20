@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   flipPicture,
   getMedia,
@@ -71,12 +71,12 @@ const UploadFromCamera = ({
           canvas.width,
           canvas.height
         );
-        pic && setClickedPicture(pic);
+        if (pic) setClickedPicture(pic);
       }, 1000);
     }
   };
 
-  const playMediaStream = (deviceId?: string) => {
+  const playMediaStream = useCallback((deviceId?: string) => {
     if (streamRef.current) {
       stopMediaStream();
     }
@@ -91,7 +91,7 @@ const UploadFromCamera = ({
         };
       }
     });
-  };
+  }, []);
 
   const stopMediaStream = () => {
     if (videoRef.current) {
@@ -120,9 +120,9 @@ const UploadFromCamera = ({
     setSelectedDeviceId(deviceId);
   };
 
-  useMemo(() => {
-    selectedDeviceId && playMediaStream(selectedDeviceId);
-  }, [selectedDeviceId]);
+  useEffect(() => {
+    if (selectedDeviceId) playMediaStream(selectedDeviceId);
+  }, [selectedDeviceId, playMediaStream]);
 
   useEffect(() => {
     getDevices();
@@ -149,7 +149,7 @@ const UploadFromCamera = ({
             width: "100%",
             height: "100%",
             objectFit: "contain",
-            display: !!clickedPicture ? "none" : "block",
+            display: clickedPicture ? "none" : "block",
           }}
           autoPlay
           playsInline
@@ -159,7 +159,7 @@ const UploadFromCamera = ({
         <canvas
           ref={canvasRef}
           style={{
-            display: !!clickedPicture ? "block" : "none",
+            display: clickedPicture ? "block" : "none",
             margin: "auto",
             width: "100%",
             height: "auto",

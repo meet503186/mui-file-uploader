@@ -181,6 +181,7 @@ const UploaderModal = ({
       isUploadable,
       getLocalizedText,
       rest,
+      files,
     ]
   );
 
@@ -240,6 +241,7 @@ const UploaderModal = ({
         overflow: "auto",
       }}
       className="hide-scrollbar"
+      onClose={handleCancel}
       buttons={[
         {
           title: getLocalizedText?.("cancel") || "Cancel",

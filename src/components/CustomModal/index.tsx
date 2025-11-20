@@ -35,6 +35,11 @@ const CustomModal = ({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
       sx={{ outline: "none", overflow: "auto" }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") {
+          onClose?.();
+        }
+      }}
     >
       <Box
         component={"div"}
@@ -53,6 +58,7 @@ const CustomModal = ({
           overflow: "auto",
           ...sx,
         }}
+        color={"primary"}
         className={`hide-scrollbar ${className}`}
       >
         {title && <ModalHeader title={title} onClose={onClose} />}

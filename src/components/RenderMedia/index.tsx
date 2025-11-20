@@ -140,7 +140,7 @@ const RenderMedia = ({
         isOpen={!!previewData}
         onClose={closePreview}
         data={media}
-        currentIndex={previewData?.selectedIndex!}
+        currentIndex={previewData?.selectedIndex || 0}
       />
     </Typography>
   );

@@ -3,11 +3,11 @@ import { IFileUploader } from "../../types";
 import UploaderModal from "./UploaderModal";
 import { useState } from "react";
 import { ImageIcon } from "../../assets/icons/IconRegistery";
+import { handleA11yKeyDown } from "../../utils";
 
 const FileUploader = ({
   error,
   files = [],
-  size,
   getLocalizedText,
   ...rest
 }: IFileUploader.Props) => {
@@ -17,6 +17,8 @@ const FileUploader = ({
   };
 
   const { label } = rest;
+
+  const handleClick = () => setShowModal(true);
 
   return (
     <Typography component={"div"} sx={{ width: "100%" }}>
@@ -29,7 +31,8 @@ const FileUploader = ({
         size="small"
         variant="outlined"
         value={files.map((file) => file.name).join(", ")}
-        onClick={() => setShowModal(true)}
+        onClick={handleClick}
+        onKeyDown={handleA11yKeyDown(handleClick)}
         fullWidth
         error={!!error}
         helperText={error}

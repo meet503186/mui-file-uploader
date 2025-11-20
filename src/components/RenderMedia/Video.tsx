@@ -20,7 +20,6 @@ const Video: React.FC<
   src,
   poster,
   width = "100%",
-  height = "100%",
   style = {},
   isPlaceholder,
   iconProps = {},
