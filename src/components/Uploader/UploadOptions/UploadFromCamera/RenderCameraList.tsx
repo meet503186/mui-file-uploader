@@ -37,12 +37,14 @@ export default function RenderCameraList({
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
-        sx={{ justifySelf: "self-start" }}
+        autoFocus
+        sx={{
+          justifySelf: "self-start",
+          ":focus-visible": { outline: `1px solid #fff` },
+          aspectRatio: 1,
+        }}
       >
-        <FlipCameraIcon
-          fontSize="medium"
-          sx={{ color: "white", aspectRatio: 1 }}
-        />
+        <FlipCameraIcon fontSize="medium" sx={{ color: "white" }} />
       </IconButton>
       <Menu
         id="basic-menu"

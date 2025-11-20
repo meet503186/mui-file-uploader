@@ -35,10 +35,9 @@ const CustomModal = ({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
       sx={{ outline: "none", overflow: "auto" }}
-      onKeyDown={(e) => {
-        if (e.key === "Escape") {
-          onClose?.();
-        }
+      onClose={(_, reason) => {
+        if (reason === "backdropClick") return;
+        onClose?.();
       }}
     >
       <Box

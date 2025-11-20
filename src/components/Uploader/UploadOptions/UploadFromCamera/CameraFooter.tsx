@@ -1,11 +1,10 @@
-import { Box, IconButton, Typography } from "@mui/material";
-
+import { Button, IconButton, Typography } from "@mui/material";
+import DoneIcon from "@mui/icons-material/Done";
+import CloseIcon from "@mui/icons-material/Close";
+import FlipIcon from "@mui/icons-material/Flip";
 import RenderCameraList from "./RenderCameraList";
-import {
-  CloseIcon,
-  DoneIcon,
-  FlipIcon,
-} from "../../../../assets/icons/IconRegistery";
+import { useMemo } from "react";
+import { OverridableComponent } from "@mui/material/OverridableComponent";
 
 interface ICameraFooterProps {
   devices: MediaDeviceInfo[];
@@ -28,8 +27,28 @@ export const CameraFooter = ({
   onDecline,
   onMirror,
 }: ICameraFooterProps) => {
+  const iconButtons = useMemo<
+    { Icon: OverridableComponent<any>; onClick: () => void }[]
+  >(
+    () => [
+      {
+        Icon: CloseIcon,
+        onClick: onDecline,
+      },
+      {
+        Icon: FlipIcon,
+        onClick: onMirror,
+      },
+      {
+        Icon: DoneIcon,
+        onClick: onAccept,
+      },
+    ],
+    [onAccept, onDecline, onMirror]
+  );
+
   return (
-    <Box
+    <Typography
       component={"div"}
       sx={{
         position: "absolute",
@@ -37,9 +56,8 @@ export const CameraFooter = ({
         background: "rgba(0, 0, 0, 0.5)",
         width: "100%",
         zIndex: 9999,
+        p: 2,
         height: 80,
-        display: "flex",
-        alignItems: "center",
       }}
     >
       {isPictureClicked ? (
@@ -51,15 +69,16 @@ export const CameraFooter = ({
             justifyContent: "space-between",
           }}
         >
-          <IconButton onClick={onDecline}>
-            <CloseIcon fontSize="large" sx={{ color: "#fff" }} />
-          </IconButton>
-          <IconButton onClick={onMirror}>
-            <FlipIcon fontSize="large" sx={{ color: "#fff" }} />
-          </IconButton>
-          <IconButton onClick={onAccept}>
-            <DoneIcon fontSize="large" sx={{ color: "#fff" }} />
-          </IconButton>
+          {iconButtons.map(({ Icon, onClick }, index) => (
+            <IconButton
+              key={index}
+              autoFocus={index === 0}
+              sx={{ ":focus-visible": { outline: `1px solid #fff` } }}
+              onClick={onClick}
+            >
+              <Icon fontSize="large" sx={{ color: "#fff" }} />
+            </IconButton>
+          ))}
         </Typography>
       ) : (
         <Typography
@@ -75,21 +94,21 @@ export const CameraFooter = ({
             selectedCamera={selectedDeviceId}
             onChangeCamera={onChangeSelectedDevice}
           />
-          <button
-            style={{
+          <Button
+            autoFocus
+            sx={{
               background: "#fff",
               borderRadius: "100%",
               border: "none",
               outline: "none",
               cursor: "pointer",
-              width: "50px",
-              height: "auto",
-              aspectRatio: 1,
+              width: 5,
+              aspectRatio: 1 / 1,
             }}
             onClick={onClickPicture}
-          ></button>
+          ></Button>
         </Typography>
       )}
-    </Box>
+    </Typography>
   );
 };
